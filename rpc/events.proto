@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "rpc";
+package rpc;
+
+message order_new {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string name = 4;
+}
+
+message order_sign {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string by = 4;
+}
+
+message order_fulfill {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string by = 4;
+}
+
+
+message event_container {
+    int32 type = 1;
+    order_new ma = 2;
+    order_sign mb = 3;
+    order_fulfill mc = 4;
+}

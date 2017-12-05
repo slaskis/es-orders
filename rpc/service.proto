@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option go_package = "rpc";
+package core;
+
+import "google/protobuf/timestamp.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+service CoreService {
+  rpc CreateOrder (OrderNewRequest) returns (OrderResponse);
+  rpc SignOrder (OrderSignRequest) returns (OrderResponse);
+  rpc FulfillOrder (OrderFulfillRequest) returns (OrderResponse);
+  rpc GetOrder (IDRequest) returns (OrderResponse);
+}
+
+message Order {
+  string ID = 1;
+  string name = 2;
+  google.protobuf.Timestamp createdAt = 3 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp updatedAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp deletedAt = 5 [(gogoproto.stdtime) = true];
+  google.protobuf.Timestamp signedAt = 6 [(gogoproto.stdtime) = true];
+  string signedBy = 7;
+  google.protobuf.Timestamp fulfilledAt = 8 [(gogoproto.stdtime) = true];
+  string fulfilledBy = 9;
+}
+
+message OrderNewRequest {
+  string name = 1;
+}
+
+message OrderSignRequest {
+  string ID = 1;
+  string signedBy = 2;
+}
+
+message OrderFulfillRequest {
+  string ID = 1;
+  string fulfilledBy = 2;
+}
+
+message OrderResponse {
+  Order order = 1;
+}
+
+message IDRequest {
+  string ID = 1;
+}
