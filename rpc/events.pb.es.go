@@ -50,6 +50,22 @@ func (m *OrderFulfill) AggregateID() string { return m.Id }
 func (m *OrderFulfill) EventVersion() int   { return int(m.Version) }
 func (m *OrderFulfill) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
+func (m *OrderRename) AggregateID() string { return m.Id }
+func (m *OrderRename) EventVersion() int   { return int(m.Version) }
+func (m *OrderRename) EventAt() time.Time  { return time.Unix(m.At, 0) }
+
+func (m *OrderAddItem) AggregateID() string { return m.Id }
+func (m *OrderAddItem) EventVersion() int   { return int(m.Version) }
+func (m *OrderAddItem) EventAt() time.Time  { return time.Unix(m.At, 0) }
+
+func (m *OrderRemoveItem) AggregateID() string { return m.Id }
+func (m *OrderRemoveItem) EventVersion() int   { return int(m.Version) }
+func (m *OrderRemoveItem) EventAt() time.Time  { return time.Unix(m.At, 0) }
+
+func (m *ItemNew) AggregateID() string { return m.Id }
+func (m *ItemNew) EventVersion() int   { return int(m.Version) }
+func (m *ItemNew) EventAt() time.Time  { return time.Unix(m.At, 0) }
+
 
 func MarshalEvent(event eventsource.Event) ([]byte, error) {
 	container := &EventContainer{}
@@ -67,6 +83,22 @@ func MarshalEvent(event eventsource.Event) ([]byte, error) {
 	case *OrderFulfill:
 		container.Type = 4
 		container.Mc = v
+
+	case *OrderRename:
+		container.Type = 5
+		container.Md = v
+
+	case *OrderAddItem:
+		container.Type = 6
+		container.Me = v
+
+	case *OrderRemoveItem:
+		container.Type = 7
+		container.Mf = v
+
+	case *ItemNew:
+		container.Type = 8
+		container.Mg = v
 
 	default:
 		return nil, fmt.Errorf("Unhandled type, %v", event)
@@ -98,6 +130,18 @@ func UnmarshalEvent(data []byte) (eventsource.Event, error) {
 
 	case 4:
 		event = container.Mc
+
+	case 5:
+		event = container.Md
+
+	case 6:
+		event = container.Me
+
+	case 7:
+		event = container.Mf
+
+	case 8:
+		event = container.Mg
 
 	default:
 		return nil, fmt.Errorf("Unhandled type, %v", container.Type)
@@ -209,6 +253,51 @@ func (b *Builder) OrderNew(name string, ) {
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
 	Name: name,
+
+	}
+	b.Events = append(b.Events, event)
+}
+
+func (b *Builder) OrderRename(name string, ) {
+	event := &OrderRename{
+		Id:      b.id,
+		Version: b.nextVersion(),
+		At:      time.Now().Unix(),
+	Name: name,
+
+	}
+	b.Events = append(b.Events, event)
+}
+
+func (b *Builder) ItemNew(sku string, description string, ) {
+	event := &ItemNew{
+		Id:      b.id,
+		Version: b.nextVersion(),
+		At:      time.Now().Unix(),
+	Sku: sku,
+	Description: description,
+
+	}
+	b.Events = append(b.Events, event)
+}
+
+func (b *Builder) OrderAddItem(item string, ) {
+	event := &OrderAddItem{
+		Id:      b.id,
+		Version: b.nextVersion(),
+		At:      time.Now().Unix(),
+	Item: item,
+
+	}
+	b.Events = append(b.Events, event)
+}
+
+func (b *Builder) OrderRemoveItem(item string, ) {
+	event := &OrderRemoveItem{
+		Id:      b.id,
+		Version: b.nextVersion(),
+		At:      time.Now().Unix(),
+	Item: item,
 
 	}
 	b.Events = append(b.Events, event)

@@ -10,6 +10,35 @@ message order_new {
   string name = 4;
 }
 
+message order_rename {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string name = 4;
+}
+
+message item_new {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string sku = 4;
+  string description = 5;
+}
+
+message order_add_item {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string item = 4;
+}
+
+message order_remove_item {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string item = 4;
+}
+
 message order_sign {
   string id = 1;
   int32 version = 2;
@@ -30,4 +59,8 @@ message event_container {
     order_new ma = 2;
     order_sign mb = 3;
     order_fulfill mc = 4;
+    order_rename md = 5;
+    order_add_item me = 6;
+    order_remove_item mf = 7;
+    item_new mg = 8;
 }

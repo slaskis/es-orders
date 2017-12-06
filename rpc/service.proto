@@ -23,6 +23,17 @@ message Order {
   string signedBy = 7;
   google.protobuf.Timestamp fulfilledAt = 8 [(gogoproto.stdtime) = true];
   string fulfilledBy = 9;
+
+  repeated Item items = 10;
+}
+
+message Item {
+  string ID = 1;
+  string SKU = 2;
+  string description = 3;
+  google.protobuf.Timestamp createdAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp updatedAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp deletedAt = 6 [(gogoproto.stdtime) = true];
 }
 
 message OrderNewRequest {

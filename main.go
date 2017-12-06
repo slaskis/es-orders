@@ -1,7 +1,3 @@
-//go:generate protoc -I .:vendor:vendor/github.com/gogo/protobuf/protobuf --gofast_out=. rpc/events.proto
-//go:generate protoc -I .:vendor:vendor/github.com/gogo/protobuf/protobuf --eventsource_out=. rpc/events.proto
-//go:generate protoc -I .:vendor:vendor/github.com/gogo/protobuf/protobuf --gofast_out=Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,plugins=grpc:. rpc/service.proto
-
 package main
 
 import (
@@ -48,13 +44,22 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	repo := eventsource.New(&rpc.Order{},
+	orders := eventsource.New(rpc.Order{},
 		eventsource.WithStore(store),
 		eventsource.WithSerializer(rpc.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	svc := service{repo: repo}
+	items := eventsource.New(rpc.Item{},
+		eventsource.WithStore(store),
+		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithDebug(os.Stderr),
+	)
+
+	svc := service{
+		orders: orders,
+		items:  items,
+	}
 
 	srv := grpc.NewServer()
 	rpc.RegisterCoreServiceServer(srv, svc)
