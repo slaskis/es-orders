@@ -38,33 +38,33 @@ func NewSerializer() eventsource.Serializer {
 	return &serializer{}
 }
 
-func (m *OrderNew) AggregateID() string { return m.Id }
-func (m *OrderNew) EventVersion() int   { return int(m.Version) }
-func (m *OrderNew) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *OrderCreated) AggregateID() string { return m.Id }
+func (m *OrderCreated) EventVersion() int   { return int(m.Version) }
+func (m *OrderCreated) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *OrderSign) AggregateID() string { return m.Id }
-func (m *OrderSign) EventVersion() int   { return int(m.Version) }
-func (m *OrderSign) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *OrderSigned) AggregateID() string { return m.Id }
+func (m *OrderSigned) EventVersion() int   { return int(m.Version) }
+func (m *OrderSigned) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *OrderFulfill) AggregateID() string { return m.Id }
-func (m *OrderFulfill) EventVersion() int   { return int(m.Version) }
-func (m *OrderFulfill) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *OrderFulfilled) AggregateID() string { return m.Id }
+func (m *OrderFulfilled) EventVersion() int   { return int(m.Version) }
+func (m *OrderFulfilled) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *OrderRename) AggregateID() string { return m.Id }
-func (m *OrderRename) EventVersion() int   { return int(m.Version) }
-func (m *OrderRename) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *OrderRenamed) AggregateID() string { return m.Id }
+func (m *OrderRenamed) EventVersion() int   { return int(m.Version) }
+func (m *OrderRenamed) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *OrderAddItem) AggregateID() string { return m.Id }
-func (m *OrderAddItem) EventVersion() int   { return int(m.Version) }
-func (m *OrderAddItem) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *OrderItemAdded) AggregateID() string { return m.Id }
+func (m *OrderItemAdded) EventVersion() int   { return int(m.Version) }
+func (m *OrderItemAdded) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *OrderRemoveItem) AggregateID() string { return m.Id }
-func (m *OrderRemoveItem) EventVersion() int   { return int(m.Version) }
-func (m *OrderRemoveItem) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *OrderItemRemoved) AggregateID() string { return m.Id }
+func (m *OrderItemRemoved) EventVersion() int   { return int(m.Version) }
+func (m *OrderItemRemoved) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *ItemNew) AggregateID() string { return m.Id }
-func (m *ItemNew) EventVersion() int   { return int(m.Version) }
-func (m *ItemNew) EventAt() time.Time  { return time.Unix(m.At, 0) }
+func (m *ItemCreated) AggregateID() string { return m.Id }
+func (m *ItemCreated) EventVersion() int   { return int(m.Version) }
+func (m *ItemCreated) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
 
 func MarshalEvent(event eventsource.Event) ([]byte, error) {
@@ -72,31 +72,31 @@ func MarshalEvent(event eventsource.Event) ([]byte, error) {
 
 	switch v := event.(type) {
 
-	case *OrderNew:
+	case *OrderCreated:
 		container.Type = 2
 		container.Ma = v
 
-	case *OrderSign:
+	case *OrderSigned:
 		container.Type = 3
 		container.Mb = v
 
-	case *OrderFulfill:
+	case *OrderFulfilled:
 		container.Type = 4
 		container.Mc = v
 
-	case *OrderRename:
+	case *OrderRenamed:
 		container.Type = 5
 		container.Md = v
 
-	case *OrderAddItem:
+	case *OrderItemAdded:
 		container.Type = 6
 		container.Me = v
 
-	case *OrderRemoveItem:
+	case *OrderItemRemoved:
 		container.Type = 7
 		container.Mf = v
 
-	case *ItemNew:
+	case *ItemCreated:
 		container.Type = 8
 		container.Mg = v
 
@@ -247,8 +247,8 @@ func (b *Builder) nextVersion() int32 {
 }
 
 
-func (b *Builder) OrderNew(name string, ) {
-	event := &OrderNew{
+func (b *Builder) OrderCreated(name string, ) {
+	event := &OrderCreated{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
@@ -258,8 +258,8 @@ func (b *Builder) OrderNew(name string, ) {
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderRename(name string, ) {
-	event := &OrderRename{
+func (b *Builder) OrderRenamed(name string, ) {
+	event := &OrderRenamed{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
@@ -269,8 +269,8 @@ func (b *Builder) OrderRename(name string, ) {
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) ItemNew(sku string, description string, ) {
-	event := &ItemNew{
+func (b *Builder) ItemCreated(sku string, description string, ) {
+	event := &ItemCreated{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
@@ -281,8 +281,20 @@ func (b *Builder) ItemNew(sku string, description string, ) {
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderAddItem(item string, ) {
-	event := &OrderAddItem{
+func (b *Builder) OrderItemAdded(item string, order string, ) {
+	event := &OrderItemAdded{
+		Id:      b.id,
+		Version: b.nextVersion(),
+		At:      time.Now().Unix(),
+	Item: item,
+	Order: order,
+
+	}
+	b.Events = append(b.Events, event)
+}
+
+func (b *Builder) OrderItemRemoved(item string, ) {
+	event := &OrderItemRemoved{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
@@ -292,19 +304,8 @@ func (b *Builder) OrderAddItem(item string, ) {
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderRemoveItem(item string, ) {
-	event := &OrderRemoveItem{
-		Id:      b.id,
-		Version: b.nextVersion(),
-		At:      time.Now().Unix(),
-	Item: item,
-
-	}
-	b.Events = append(b.Events, event)
-}
-
-func (b *Builder) OrderSign(by string, ) {
-	event := &OrderSign{
+func (b *Builder) OrderSigned(by string, ) {
+	event := &OrderSigned{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
@@ -314,8 +315,8 @@ func (b *Builder) OrderSign(by string, ) {
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderFulfill(by string, ) {
-	event := &OrderFulfill{
+func (b *Builder) OrderFulfilled(by string, ) {
+	event := &OrderFulfilled{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),

@@ -1,43 +1,57 @@
 syntax = "proto3";
 
-option go_package = "rpc";
 package core;
 
 import "google/protobuf/timestamp.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option go_package = "rpc";
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
 
 service CoreService {
   rpc CreateOrder (OrderNewRequest) returns (OrderResponse);
   rpc SignOrder (OrderSignRequest) returns (OrderResponse);
   rpc FulfillOrder (OrderFulfillRequest) returns (OrderResponse);
   rpc GetOrder (IDRequest) returns (OrderResponse);
+  rpc ListItemsOfOrder (IDRequest) returns (ItemsResponse);
 }
 
 message Order {
   string ID = 1;
-  string name = 2;
-  google.protobuf.Timestamp createdAt = 3 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp updatedAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp deletedAt = 5 [(gogoproto.stdtime) = true];
-  google.protobuf.Timestamp signedAt = 6 [(gogoproto.stdtime) = true];
-  string signedBy = 7;
-  google.protobuf.Timestamp fulfilledAt = 8 [(gogoproto.stdtime) = true];
-  string fulfilledBy = 9;
+  int32 version = 2;
+  string name = 3;
+  google.protobuf.Timestamp createdAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp updatedAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp deletedAt = 6 [(gogoproto.stdtime) = true];
+  google.protobuf.Timestamp signedAt = 7 [(gogoproto.stdtime) = true];
+  string signedBy = 8;
+  google.protobuf.Timestamp fulfilledAt = 9 [(gogoproto.stdtime) = true];
+  string fulfilledBy = 10;
 
-  repeated Item items = 10;
+  repeated string itemIDs = 11;
 }
 
 message Item {
   string ID = 1;
-  string SKU = 2;
-  string description = 3;
-  google.protobuf.Timestamp createdAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp updatedAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp deletedAt = 6 [(gogoproto.stdtime) = true];
+  int32 version = 2;
+  string SKU = 3;
+  string description = 4;
+  google.protobuf.Timestamp createdAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp updatedAt = 6 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp deletedAt = 7 [(gogoproto.stdtime) = true];
+
+  string orderID = 8;
 }
 
 message OrderNewRequest {
+  message NewItem {
+    string SKU = 1;
+    string description = 2;
+  }
   string name = 1;
+  repeated NewItem items = 2;
 }
 
 message OrderSignRequest {
@@ -52,6 +66,10 @@ message OrderFulfillRequest {
 
 message OrderResponse {
   Order order = 1;
+}
+
+message ItemsResponse {
+  repeated Item items = 1;
 }
 
 message IDRequest {

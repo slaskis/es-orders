@@ -18,25 +18,47 @@ type service struct {
 var entropy = rand.New(rand.NewSource(time.Unix(1000000, 0).UnixNano()))
 
 func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rpc.OrderResponse, error) {
-	id, err := ulid.New(ulid.Now(), entropy)
+	orderID, err := ulid.New(ulid.Now(), entropy)
 	if err != nil {
 		return nil, err
 	}
-	b := rpc.NewBuilder(id.String(), 0)
-	b.OrderNew(req.Name)
-	err = s.orders.Save(ctx, b.Events...)
+
+	_, err = s.orders.Apply(ctx, &rpc.CreateOrder{
+		CommandModel: eventsource.CommandModel{ID: orderID.String()},
+		Name:         req.Name,
+	})
 	if err != nil {
 		return nil, err
 	}
-	agg, err := s.orders.Load(ctx, id.String())
-	if err != nil {
-		return nil, err
+
+	for _, i := range req.Items {
+		itemID, err := ulid.New(ulid.Now(), entropy)
+		if err != nil {
+			return nil, err
+		}
+		_, err = s.items.Apply(ctx, &rpc.CreateItem{
+			CommandModel: eventsource.CommandModel{ID: itemID.String()},
+			SKU:          i.SKU,
+			Description:  i.Description,
+			OrderID:      orderID.String(),
+		})
+		if err != nil {
+			return nil, err
+		}
+		_, err = s.orders.Apply(ctx, &rpc.AddItem{
+			CommandModel: eventsource.CommandModel{ID: orderID.String()},
+			ItemID:       itemID.String(),
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
-	order := agg.(rpc.Order)
-	return &rpc.OrderResponse{Order: &order}, nil
+
+	return s.GetOrder(ctx, &rpc.IDRequest{ID: orderID.String()})
 }
 func (s service) SignOrder(ctx context.Context, req *rpc.OrderSignRequest) (*rpc.OrderResponse, error) {
-	return nil, nil
+	// TODO sign order...
+	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
 }
 func (s service) FulfillOrder(ctx context.Context, req *rpc.OrderFulfillRequest) (*rpc.OrderResponse, error) {
 	return nil, nil
@@ -46,6 +68,23 @@ func (s service) GetOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.OrderRe
 	if err != nil {
 		return nil, err
 	}
-	order := agg.(rpc.Order)
-	return &rpc.OrderResponse{Order: &order}, nil
+	return &rpc.OrderResponse{Order: agg.(*rpc.Order)}, nil
+}
+
+func (s service) ListItemsOfOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.ItemsResponse, error) {
+	var items []*rpc.Item
+	res, err := s.GetOrder(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	for _, i := range res.Order.ItemIDs {
+		agg, err := s.items.Load(ctx, i)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, agg.(*rpc.Item))
+	}
+	return &rpc.ItemsResponse{
+		Items: items,
+	}, nil
 }

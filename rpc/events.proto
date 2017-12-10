@@ -1,23 +1,30 @@
 syntax = "proto3";
 
-option go_package = "rpc";
 package rpc;
 
-message order_new {
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option go_package = "rpc";
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+
+message order_created {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
   string name = 4;
 }
 
-message order_rename {
+message order_renamed {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
   string name = 4;
 }
 
-message item_new {
+message item_created {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
@@ -25,28 +32,29 @@ message item_new {
   string description = 5;
 }
 
-message order_add_item {
+message order_item_added {
+  string id = 1; // either item id or order id depending on command
+  int32 version = 2;
+  int64 at = 3;
+  string item = 4;
+  string order = 5;
+}
+
+message order_item_removed {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
   string item = 4;
 }
 
-message order_remove_item {
-  string id = 1;
-  int32 version = 2;
-  int64 at = 3;
-  string item = 4;
-}
-
-message order_sign {
+message order_signed {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
   string by = 4;
 }
 
-message order_fulfill {
+message order_fulfilled {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
@@ -56,11 +64,11 @@ message order_fulfill {
 
 message event_container {
     int32 type = 1;
-    order_new ma = 2;
-    order_sign mb = 3;
-    order_fulfill mc = 4;
-    order_rename md = 5;
-    order_add_item me = 6;
-    order_remove_item mf = 7;
-    item_new mg = 8;
+    order_created ma = 2;
+    order_signed mb = 3;
+    order_fulfilled mc = 4;
+    order_renamed md = 5;
+    order_item_added me = 6;
+    order_item_removed mf = 7;
+    item_created mg = 8;
 }

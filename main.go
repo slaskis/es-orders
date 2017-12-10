@@ -44,13 +44,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	orders := eventsource.New(rpc.Order{},
+	orders := eventsource.New(&rpc.Order{},
 		eventsource.WithStore(store),
 		eventsource.WithSerializer(rpc.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	items := eventsource.New(rpc.Item{},
+	items := eventsource.New(&rpc.Item{},
 		eventsource.WithStore(store),
 		eventsource.WithSerializer(rpc.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
