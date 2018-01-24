@@ -34,8 +34,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
-  packages = ["proto","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
-  revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
+  packages = ["jsonpb","proto","ptypes/struct"]
+  revision = "c65a0412e71e8b9b3bfd22925720d23c0f054237"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
@@ -55,32 +55,14 @@
   version = "v0.8.0"
 
 [[projects]]
-  branch = "master"
-  name = "golang.org/x/net"
-  packages = ["context","http2","http2/hpack","idna","internal/timeseries","lex/httplex","trace"]
-  revision = "a8b9294777976932365dabb6640cf1468d95c70f"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/text"
-  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "57961680700a5336d15015c8c50686ca5ba362a4"
-
-[[projects]]
-  branch = "master"
-  name = "google.golang.org/genproto"
-  packages = ["googleapis/rpc/status"]
-  revision = "7f0da29060c682909f650ad8ed4e515bd74fa12a"
-
-[[projects]]
-  branch = "master"
-  name = "google.golang.org/grpc"
-  packages = [".","balancer","balancer/roundrobin","codes","connectivity","credentials","encoding","grpclb/grpc_lb_v1/messages","grpclog","internal","keepalive","metadata","naming","peer","resolver","resolver/dns","resolver/manual","resolver/passthrough","stats","status","tap","transport"]
-  revision = "be077907e29fdb945d351e4284eb5361e7f8924e"
+  name = "github.com/twitchtv/twirp"
+  packages = [".","ctxsetters","internal/contextkeys"]
+  revision = "dff337b186d4ea1ada1d1e54ef422fdbcfa3113d"
+  version = "v5.1.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "43752b63abf2824f5d0a05c17defe31f37b311b0be9b19f66bcc984a117c2c12"
+  inputs-digest = "77ece68b14feaa9c068d4d30553577f2289a0c4c01cff86a88cf64887e4f3b8f"
   solver-name = "gps-cdcl"
   solver-version = 1

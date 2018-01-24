@@ -14,61 +14,35 @@ message order_created {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
-  string name = 4;
-}
-
-message order_renamed {
-  string id = 1;
-  int32 version = 2;
-  int64 at = 3;
-  string name = 4;
-}
-
-message item_created {
-  string id = 1;
-  int32 version = 2;
-  int64 at = 3;
-  string sku = 4;
-  string description = 5;
 }
 
 message order_item_added {
-  string id = 1; // either item id or order id depending on command
+  string id = 1;
   int32 version = 2;
   int64 at = 3;
-  string item = 4;
-  string order = 5;
+  string item_id = 4;
+  string sku = 5;
+  string description = 6;
 }
 
 message order_item_removed {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
-  string item = 4;
+  string item_id = 4;
 }
-
-message order_signed {
-  string id = 1;
-  int32 version = 2;
-  int64 at = 3;
-  string by = 4;
-}
-
 message order_fulfilled {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
   string by = 4;
+  bool approved = 5;
 }
-
 
 message event_container {
     int32 type = 1;
     order_created ma = 2;
-    order_signed mb = 3;
-    order_fulfilled mc = 4;
-    order_renamed md = 5;
-    order_item_added me = 6;
-    order_item_removed mf = 7;
-    item_created mg = 8;
+    order_fulfilled mc = 3;
+    order_item_added me = 4;
+    order_item_removed mf = 5;
 }

@@ -32,11 +32,3 @@
 [[constraint]]
   branch = "master"
   name = "github.com/golang/protobuf"
-
-[[constraint]]
-  branch = "master"
-  name = "golang.org/x/net"
-
-[[constraint]]
-  branch = "master"
-  name = "google.golang.org/grpc"

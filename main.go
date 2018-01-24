@@ -4,10 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
+	"net/http"
 	"os"
-
-	"google.golang.org/grpc"
 
 	"github.com/altairsix/eventsource"
 	"github.com/altairsix/eventsource/dynamodbstore"
@@ -29,13 +27,6 @@ func main() {
 	flag.StringVar(&opts.region, "region", "eu-central-1", "dynamodb region")
 	flag.Parse()
 
-	addr := fmt.Sprintf("%s:%d", opts.host, opts.port)
-	lis, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Printf("listening on %s\n", lis.Addr())
-
 	store, err := dynamodbstore.New(opts.table,
 		dynamodbstore.WithRegion(opts.region),
 		dynamodbstore.WithDebug(os.Stderr),
@@ -50,20 +41,14 @@ func main() {
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	items := eventsource.New(&rpc.Item{},
-		eventsource.WithStore(store),
-		eventsource.WithSerializer(rpc.NewSerializer()),
-		eventsource.WithDebug(os.Stderr),
-	)
-
 	svc := service{
 		orders: orders,
-		items:  items,
 	}
 
-	srv := grpc.NewServer()
-	rpc.RegisterCoreServiceServer(srv, svc)
-	err = srv.Serve(lis)
+	srv := rpc.NewCoreServiceServer(svc, nil)
+
+	addr := fmt.Sprintf("%s:%d", opts.host, opts.port)
+	err = http.ListenAndServe(addr, srv)
 	if err != nil {
 		log.Fatalln(err)
 	}

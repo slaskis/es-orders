@@ -12,7 +12,6 @@ import (
 
 type service struct {
 	orders *eventsource.Repository
-	items  *eventsource.Repository
 }
 
 var entropy = rand.New(rand.NewSource(time.Unix(1000000, 0).UnixNano()))
@@ -25,7 +24,6 @@ func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rp
 
 	_, err = s.orders.Apply(ctx, &rpc.CreateOrder{
 		CommandModel: eventsource.CommandModel{ID: orderID.String()},
-		Name:         req.Name,
 	})
 	if err != nil {
 		return nil, err
@@ -36,18 +34,13 @@ func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rp
 		if err != nil {
 			return nil, err
 		}
-		_, err = s.items.Apply(ctx, &rpc.CreateItem{
-			CommandModel: eventsource.CommandModel{ID: itemID.String()},
-			SKU:          i.SKU,
-			Description:  i.Description,
-			OrderID:      orderID.String(),
-		})
-		if err != nil {
-			return nil, err
-		}
 		_, err = s.orders.Apply(ctx, &rpc.AddItem{
 			CommandModel: eventsource.CommandModel{ID: orderID.String()},
-			ItemID:       itemID.String(),
+			Item: &rpc.Item{
+				ID:          itemID.String(),
+				SKU:         i.SKU,
+				Description: i.Description,
+			},
 		})
 		if err != nil {
 			return nil, err
@@ -56,12 +49,59 @@ func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rp
 
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: orderID.String()})
 }
-func (s service) SignOrder(ctx context.Context, req *rpc.OrderSignRequest) (*rpc.OrderResponse, error) {
-	// TODO sign order...
+func (s service) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest) (*rpc.OrderResponse, error) {
+	_, err := s.orders.Load(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+	s.orders.Apply(ctx, &rpc.FulfillOrder{
+		CommandModel: eventsource.CommandModel{ID: req.ID},
+		By:           req.FulfilledBy,
+		Approved:     true,
+	})
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
 }
-func (s service) FulfillOrder(ctx context.Context, req *rpc.OrderFulfillRequest) (*rpc.OrderResponse, error) {
-	return nil, nil
+func (s service) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (*rpc.OrderResponse, error) {
+	_, err := s.orders.Load(ctx, req.ID)
+	if err != nil {
+		return nil, err
+	}
+	s.orders.Apply(ctx, &rpc.FulfillOrder{
+		CommandModel: eventsource.CommandModel{ID: req.ID},
+		By:           req.FulfilledBy,
+		Approved:     false,
+	})
+	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
+}
+func (s service) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rpc.OrderResponse, error) {
+	_, err := s.orders.Load(ctx, req.OrderID)
+	if err != nil {
+		return nil, err
+	}
+	itemID, err := ulid.New(ulid.Now(), entropy)
+	if err != nil {
+		return nil, err
+	}
+	s.orders.Apply(ctx, &rpc.AddItem{
+		CommandModel: eventsource.CommandModel{ID: req.OrderID},
+		Item: &rpc.Item{
+			ID:          itemID.String(),
+			SKU:         req.Item.SKU,
+			Description: req.Item.Description,
+		},
+	})
+	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.OrderID})
+}
+func (s service) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRequest) (*rpc.OrderResponse, error) {
+	_, err := s.orders.Load(ctx, req.OrderID)
+	if err != nil {
+		return nil, err
+	}
+	s.orders.Apply(ctx, &rpc.RemoveItem{
+		CommandModel: eventsource.CommandModel{ID: req.OrderID},
+		ItemID:       req.ItemID,
+	})
+	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.OrderID})
 }
 func (s service) GetOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.OrderResponse, error) {
 	agg, err := s.orders.Load(ctx, req.ID)
@@ -69,22 +109,4 @@ func (s service) GetOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.OrderRe
 		return nil, err
 	}
 	return &rpc.OrderResponse{Order: agg.(*rpc.Order)}, nil
-}
-
-func (s service) ListItemsOfOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.ItemsResponse, error) {
-	var items []*rpc.Item
-	res, err := s.GetOrder(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	for _, i := range res.Order.ItemIDs {
-		agg, err := s.items.Load(ctx, i)
-		if err != nil {
-			return nil, err
-		}
-		items = append(items, agg.(*rpc.Item))
-	}
-	return &rpc.ItemsResponse{
-		Items: items,
-	}, nil
 }

@@ -42,17 +42,9 @@ func (m *OrderCreated) AggregateID() string { return m.Id }
 func (m *OrderCreated) EventVersion() int   { return int(m.Version) }
 func (m *OrderCreated) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
-func (m *OrderSigned) AggregateID() string { return m.Id }
-func (m *OrderSigned) EventVersion() int   { return int(m.Version) }
-func (m *OrderSigned) EventAt() time.Time  { return time.Unix(m.At, 0) }
-
 func (m *OrderFulfilled) AggregateID() string { return m.Id }
 func (m *OrderFulfilled) EventVersion() int   { return int(m.Version) }
 func (m *OrderFulfilled) EventAt() time.Time  { return time.Unix(m.At, 0) }
-
-func (m *OrderRenamed) AggregateID() string { return m.Id }
-func (m *OrderRenamed) EventVersion() int   { return int(m.Version) }
-func (m *OrderRenamed) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
 func (m *OrderItemAdded) AggregateID() string { return m.Id }
 func (m *OrderItemAdded) EventVersion() int   { return int(m.Version) }
@@ -61,10 +53,6 @@ func (m *OrderItemAdded) EventAt() time.Time  { return time.Unix(m.At, 0) }
 func (m *OrderItemRemoved) AggregateID() string { return m.Id }
 func (m *OrderItemRemoved) EventVersion() int   { return int(m.Version) }
 func (m *OrderItemRemoved) EventAt() time.Time  { return time.Unix(m.At, 0) }
-
-func (m *ItemCreated) AggregateID() string { return m.Id }
-func (m *ItemCreated) EventVersion() int   { return int(m.Version) }
-func (m *ItemCreated) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
 
 func MarshalEvent(event eventsource.Event) ([]byte, error) {
@@ -76,29 +64,17 @@ func MarshalEvent(event eventsource.Event) ([]byte, error) {
 		container.Type = 2
 		container.Ma = v
 
-	case *OrderSigned:
-		container.Type = 3
-		container.Mb = v
-
 	case *OrderFulfilled:
-		container.Type = 4
+		container.Type = 3
 		container.Mc = v
 
-	case *OrderRenamed:
-		container.Type = 5
-		container.Md = v
-
 	case *OrderItemAdded:
-		container.Type = 6
+		container.Type = 4
 		container.Me = v
 
 	case *OrderItemRemoved:
-		container.Type = 7
+		container.Type = 5
 		container.Mf = v
-
-	case *ItemCreated:
-		container.Type = 8
-		container.Mg = v
 
 	default:
 		return nil, fmt.Errorf("Unhandled type, %v", event)
@@ -126,22 +102,13 @@ func UnmarshalEvent(data []byte) (eventsource.Event, error) {
 		event = container.Ma
 
 	case 3:
-		event = container.Mb
-
-	case 4:
 		event = container.Mc
 
-	case 5:
-		event = container.Md
-
-	case 6:
+	case 4:
 		event = container.Me
 
-	case 7:
+	case 5:
 		event = container.Mf
-
-	case 8:
-		event = container.Mg
 
 	default:
 		return nil, fmt.Errorf("Unhandled type, %v", container.Type)
@@ -247,33 +214,22 @@ func (b *Builder) nextVersion() int32 {
 }
 
 
-func (b *Builder) OrderCreated(name string, ) {
+func (b *Builder) OrderCreated() {
 	event := &OrderCreated{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
-	Name: name,
 
 	}
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderRenamed(name string, ) {
-	event := &OrderRenamed{
+func (b *Builder) OrderItemAdded(itemid string, sku string, description string, ) {
+	event := &OrderItemAdded{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
-	Name: name,
-
-	}
-	b.Events = append(b.Events, event)
-}
-
-func (b *Builder) ItemCreated(sku string, description string, ) {
-	event := &ItemCreated{
-		Id:      b.id,
-		Version: b.nextVersion(),
-		At:      time.Now().Unix(),
+	ItemId: itemid,
 	Sku: sku,
 	Description: description,
 
@@ -281,46 +237,24 @@ func (b *Builder) ItemCreated(sku string, description string, ) {
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderItemAdded(item string, order string, ) {
-	event := &OrderItemAdded{
-		Id:      b.id,
-		Version: b.nextVersion(),
-		At:      time.Now().Unix(),
-	Item: item,
-	Order: order,
-
-	}
-	b.Events = append(b.Events, event)
-}
-
-func (b *Builder) OrderItemRemoved(item string, ) {
+func (b *Builder) OrderItemRemoved(itemid string, ) {
 	event := &OrderItemRemoved{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
-	Item: item,
+	ItemId: itemid,
 
 	}
 	b.Events = append(b.Events, event)
 }
 
-func (b *Builder) OrderSigned(by string, ) {
-	event := &OrderSigned{
-		Id:      b.id,
-		Version: b.nextVersion(),
-		At:      time.Now().Unix(),
-	By: by,
-
-	}
-	b.Events = append(b.Events, event)
-}
-
-func (b *Builder) OrderFulfilled(by string, ) {
+func (b *Builder) OrderFulfilled(by string, approved bool, ) {
 	event := &OrderFulfilled{
 		Id:      b.id,
 		Version: b.nextVersion(),
 		At:      time.Now().Unix(),
 	By: by,
+	Approved: approved,
 
 	}
 	b.Events = append(b.Events, event)
