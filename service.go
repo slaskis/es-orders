@@ -62,6 +62,10 @@ func (s service) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest)
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO create customer (if not exists) and for each item generate
+	//		  events on the customer
+
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
 }
 func (s service) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (*rpc.OrderResponse, error) {

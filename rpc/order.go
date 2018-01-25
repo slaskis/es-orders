@@ -22,8 +22,7 @@ func (order *Order) On(event eventsource.Event) error {
 			ID:          v.ItemId,
 			SKU:         v.Sku,
 			Description: v.Description,
-			CreatedAt:   v.EventAt(),
-			UpdatedAt:   v.EventAt(),
+			AddedAt:     v.EventAt(),
 		}
 		order.Status = OrderStatus_PENDING
 		order.Items = append(order.Items, item)

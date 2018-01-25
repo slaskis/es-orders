@@ -47,8 +47,7 @@ message Item {
   string ID = 1;
   string SKU = 2;
   string description = 3;
-  google.protobuf.Timestamp createdAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp updatedAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp addedAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
 }
 
 message NewItem {
