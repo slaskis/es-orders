@@ -4,18 +4,51 @@
 [[projects]]
   branch = "master"
   name = "github.com/altairsix/eventsource"
-  packages = [".","dynamodbstore"]
+  packages = [
+    ".",
+    "dynamodbstore"
+  ]
   revision = "7b6859b7a00908296beea99d5d2800b6c071c084"
 
 [[projects]]
   name = "github.com/apex/go-apex"
-  packages = [".","dynamo"]
+  packages = [
+    ".",
+    "dynamo"
+  ]
   revision = "338ee0137bc07a472789968021e66c5df905fc26"
   version = "v1.0.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
-  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/xml/xmlutil","service/dynamodb","service/sts"]
+  packages = [
+    "aws",
+    "aws/awserr",
+    "aws/awsutil",
+    "aws/client",
+    "aws/client/metadata",
+    "aws/corehandlers",
+    "aws/credentials",
+    "aws/credentials/ec2rolecreds",
+    "aws/credentials/endpointcreds",
+    "aws/credentials/stscreds",
+    "aws/defaults",
+    "aws/ec2metadata",
+    "aws/endpoints",
+    "aws/request",
+    "aws/session",
+    "aws/signer/v4",
+    "internal/shareddefaults",
+    "private/protocol",
+    "private/protocol/json/jsonutil",
+    "private/protocol/jsonrpc",
+    "private/protocol/query",
+    "private/protocol/query/queryutil",
+    "private/protocol/rest",
+    "private/protocol/xml/xmlutil",
+    "service/dynamodb",
+    "service/sts"
+  ]
   revision = "107df09c5f137b9dfe53b7a4c25dd4d79f81390f"
   version = "v1.12.40"
 
@@ -28,7 +61,14 @@
 [[projects]]
   branch = "master"
   name = "github.com/gogo/protobuf"
-  packages = ["gogoproto","jsonpb","proto","protoc-gen-gogo/descriptor","sortkeys","types"]
+  packages = [
+    "gogoproto",
+    "jsonpb",
+    "proto",
+    "protoc-gen-gogo/descriptor",
+    "sortkeys",
+    "types"
+  ]
   revision = "fcdc5011193ff531a548e9b0301828d5a5b97fd8"
 
 [[projects]]
@@ -50,13 +90,17 @@
 
 [[projects]]
   name = "github.com/twitchtv/twirp"
-  packages = [".","ctxsetters","internal/contextkeys"]
+  packages = [
+    ".",
+    "ctxsetters",
+    "internal/contextkeys"
+  ]
   revision = "dff337b186d4ea1ada1d1e54ef422fdbcfa3113d"
   version = "v5.1.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5568b5425df35bad8b47736875d2203088e2fc5a2cbbce866f53442158c83cea"
+  inputs-digest = "4341e98327c9b48720837f560ecbcd9ab4cefc4000eba07e051813f9c16be039"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -27,4 +27,4 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/golang/protobuf"
+  name = "github.com/gogo/protobuf"
