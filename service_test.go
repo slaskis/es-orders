@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/altairsix/eventsource"
 	"github.com/slaskis/es-orders/rpc"
@@ -41,7 +40,7 @@ func TestService(t *testing.T) {
 		t.Fatalf("order must be pending")
 	}
 	if res.Order.CreatedAt.IsZero() {
-		t.Fatalf("order must have created at date. was: %s", res.Order.CreatedAt.Format(time.RFC3339))
+		t.Fatalf("order must have created at date")
 	}
 	if res.Order.UpdatedAt.IsZero() {
 		t.Fatalf("order must have updated at date")

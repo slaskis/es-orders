@@ -41,11 +41,8 @@ func main() {
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	svc := service{
-		orders: orders,
-	}
-
-	srv := rpc.NewCoreServiceServer(svc, nil)
+	svc := NewService(orders)
+	srv := rpc.NewOrderServiceServer(svc, nil)
 
 	addr := fmt.Sprintf("%s:%d", opts.host, opts.port)
 	err = http.ListenAndServe(addr, srv)

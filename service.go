@@ -14,6 +14,10 @@ type service struct {
 	orders *eventsource.Repository
 }
 
+func NewService(orders *eventsource.Repository) rpc.OrderService {
+	return service{orders: orders}
+}
+
 var entropy = rand.New(rand.NewSource(time.Unix(1000000, 0).UnixNano()))
 
 func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rpc.OrderResponse, error) {
