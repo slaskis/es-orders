@@ -34,8 +34,6 @@ message Order {
   google.protobuf.Timestamp createdAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
   google.protobuf.Timestamp updatedAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
   google.protobuf.Timestamp deletedAt = 6 [(gogoproto.stdtime) = true];
-  google.protobuf.Timestamp signedAt = 7 [(gogoproto.stdtime) = true];
-  string signedBy = 8;
   google.protobuf.Timestamp fulfilledAt = 9 [(gogoproto.stdtime) = true];
   string fulfilledBy = 10;
 

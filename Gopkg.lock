@@ -28,14 +28,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/gogo/protobuf"
-  packages = ["gogoproto","proto","protoc-gen-gogo/descriptor","sortkeys","types"]
+  packages = ["gogoproto","jsonpb","proto","protoc-gen-gogo/descriptor","sortkeys","types"]
   revision = "fcdc5011193ff531a548e9b0301828d5a5b97fd8"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/golang/protobuf"
-  packages = ["jsonpb","proto","ptypes/struct","ptypes/timestamp"]
-  revision = "c65a0412e71e8b9b3bfd22925720d23c0f054237"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
@@ -63,6 +57,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bb08d3c02b6f38e5f9bd5741583e03efa5dfbab2df216fbcf7cc82aab4503ff0"
+  inputs-digest = "5568b5425df35bad8b47736875d2203088e2fc5a2cbbce866f53442158c83cea"
   solver-name = "gps-cdcl"
   solver-version = 1
