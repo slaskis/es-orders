@@ -41,11 +41,18 @@ func main() {
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	svc := NewService(orders)
-	srv := rpc.NewOrderServiceServer(svc, nil)
+	customers := eventsource.New(&rpc.Order{},
+		eventsource.WithStore(store),
+		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithDebug(os.Stderr),
+	)
+
+	mux := http.NewServeMux()
+	mux.Handle("/", rpc.NewOrderServiceServer(NewOrderService(orders), nil))
+	mux.Handle("/", rpc.NewCustomerServiceServer(NewCustomerService(customers), nil))
 
 	addr := fmt.Sprintf("%s:%d", opts.host, opts.port)
-	err = http.ListenAndServe(addr, srv)
+	err = http.ListenAndServe(addr, mux)
 	if err != nil {
 		log.Fatalln(err)
 	}

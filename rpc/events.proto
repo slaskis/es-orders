@@ -38,11 +38,18 @@ message order_fulfilled {
   string by = 4;
   bool approved = 5;
 }
+message customer_created {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string name = 4;
+}
 
 message event_container {
-    int32 type = 1;
-    order_created ma = 2;
-    order_fulfilled mc = 3;
-    order_item_added me = 4;
-    order_item_removed mf = 5;
+  int32 type = 1;
+  order_created ma = 2;
+  order_fulfilled mc = 3;
+  order_item_added me = 4;
+  order_item_removed mf = 5;
+  customer_created mg = 6;
 }

@@ -16,7 +16,7 @@ service OrderService {
   rpc RemoveItem (OrderItemRemoveRequest) returns (OrderResponse);
   rpc ApproveOrder (OrderApproveRequest) returns (OrderResponse);
   rpc RejectOrder (OrderRejectRequest) returns (OrderResponse);
-  rpc GetOrder (IDRequest) returns (OrderResponse);
+  rpc GetOrder (GetOrderRequest) returns (OrderResponse);
 }
 
 enum OrderStatus {
@@ -77,10 +77,10 @@ message OrderRejectRequest {
   string fulfilledBy = 2;
 }
 
-message OrderResponse {
-  Order order = 1;
+message GetOrderRequest {
+  string ID = 1;
 }
 
-message IDRequest {
-  string ID = 1;
+message OrderResponse {
+  Order order = 1;
 }

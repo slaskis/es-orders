@@ -4,6 +4,7 @@ build: es-orders
 .PHONY: build
 
 generate: rpc/*.pb.go
+	@: # sshhh
 .PHONY: generate
 
 vendor:
@@ -13,5 +14,5 @@ vendor:
 es-orders: *go
 	go build .
 
-%.pb.go: %.proto
+%.pb.go: %.proto generate.go
 	go generate .

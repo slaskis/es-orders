@@ -9,18 +9,16 @@ import (
 	"github.com/slaskis/es-orders/rpc"
 )
 
-func TestService(t *testing.T) {
+func TestOrderService(t *testing.T) {
 	obs := func(event eventsource.Event) {
 		t.Logf("observer event: %s", event)
 	}
 
-	svc := service{
-		orders: eventsource.New(&rpc.Order{},
-			eventsource.WithSerializer(rpc.NewSerializer()),
-			eventsource.WithDebug(os.Stdout),
-			eventsource.WithObservers(obs),
-		),
-	}
+	svc := NewOrderService(eventsource.New(&rpc.Order{},
+		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithDebug(os.Stdout),
+		eventsource.WithObservers(obs),
+	))
 
 	ctx := context.Background()
 	res, err := svc.CreateOrder(ctx, &rpc.OrderNewRequest{
@@ -76,7 +74,7 @@ func TestService(t *testing.T) {
 		t.Fatalf("%+v", err)
 	}
 
-	res4, err := svc.GetOrder(ctx, &rpc.IDRequest{ID: res.Order.ID})
+	res4, err := svc.GetOrder(ctx, &rpc.GetOrderRequest{ID: res.Order.ID})
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}

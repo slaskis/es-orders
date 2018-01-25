@@ -2,25 +2,21 @@ package main
 
 import (
 	"context"
-	"math/rand"
-	"time"
 
 	"github.com/altairsix/eventsource"
 	"github.com/oklog/ulid"
 	"github.com/slaskis/es-orders/rpc"
 )
 
-type service struct {
+type orderService struct {
 	orders *eventsource.Repository
 }
 
-func NewService(orders *eventsource.Repository) rpc.OrderService {
-	return service{orders: orders}
+func NewOrderService(orders *eventsource.Repository) rpc.OrderService {
+	return orderService{orders: orders}
 }
 
-var entropy = rand.New(rand.NewSource(time.Unix(1000000, 0).UnixNano()))
-
-func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rpc.OrderResponse, error) {
+func (s orderService) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rpc.OrderResponse, error) {
 	orderID, err := ulid.New(ulid.Now(), entropy)
 	if err != nil {
 		return nil, err
@@ -51,9 +47,9 @@ func (s service) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rp
 		}
 	}
 
-	return s.GetOrder(ctx, &rpc.IDRequest{ID: orderID.String()})
+	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: orderID.String()})
 }
-func (s service) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest) (*rpc.OrderResponse, error) {
+func (s orderService) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest) (*rpc.OrderResponse, error) {
 	_, err := s.orders.Load(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -70,9 +66,9 @@ func (s service) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest)
 	// TODO create customer (if not exists) and for each item generate
 	//		  events on the customer
 
-	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
+	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: req.ID})
 }
-func (s service) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (*rpc.OrderResponse, error) {
+func (s orderService) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (*rpc.OrderResponse, error) {
 	_, err := s.orders.Load(ctx, req.ID)
 	if err != nil {
 		return nil, err
@@ -85,9 +81,9 @@ func (s service) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (
 	if err != nil {
 		return nil, err
 	}
-	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
+	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: req.ID})
 }
-func (s service) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rpc.OrderResponse, error) {
+func (s orderService) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rpc.OrderResponse, error) {
 	_, err := s.orders.Load(ctx, req.OrderID)
 	if err != nil {
 		return nil, err
@@ -107,9 +103,9 @@ func (s service) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rp
 	if err != nil {
 		return nil, err
 	}
-	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.OrderID})
+	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: req.OrderID})
 }
-func (s service) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRequest) (*rpc.OrderResponse, error) {
+func (s orderService) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRequest) (*rpc.OrderResponse, error) {
 	_, err := s.orders.Load(ctx, req.OrderID)
 	if err != nil {
 		return nil, err
@@ -121,9 +117,9 @@ func (s service) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRequest
 	if err != nil {
 		return nil, err
 	}
-	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.OrderID})
+	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: req.OrderID})
 }
-func (s service) GetOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.OrderResponse, error) {
+func (s orderService) GetOrder(ctx context.Context, req *rpc.GetOrderRequest) (*rpc.OrderResponse, error) {
 	agg, err := s.orders.Load(ctx, req.ID)
 	if err != nil {
 		return nil, err
