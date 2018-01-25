@@ -54,11 +54,14 @@ func (s service) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest)
 	if err != nil {
 		return nil, err
 	}
-	s.orders.Apply(ctx, &rpc.FulfillOrder{
+	_, err = s.orders.Apply(ctx, &rpc.FulfillOrder{
 		CommandModel: eventsource.CommandModel{ID: req.ID},
 		By:           req.FulfilledBy,
 		Approved:     true,
 	})
+	if err != nil {
+		return nil, err
+	}
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
 }
 func (s service) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (*rpc.OrderResponse, error) {
@@ -66,11 +69,14 @@ func (s service) RejectOrder(ctx context.Context, req *rpc.OrderRejectRequest) (
 	if err != nil {
 		return nil, err
 	}
-	s.orders.Apply(ctx, &rpc.FulfillOrder{
+	_, err = s.orders.Apply(ctx, &rpc.FulfillOrder{
 		CommandModel: eventsource.CommandModel{ID: req.ID},
 		By:           req.FulfilledBy,
 		Approved:     false,
 	})
+	if err != nil {
+		return nil, err
+	}
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.ID})
 }
 func (s service) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rpc.OrderResponse, error) {
@@ -82,7 +88,7 @@ func (s service) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rp
 	if err != nil {
 		return nil, err
 	}
-	s.orders.Apply(ctx, &rpc.AddItem{
+	_, err = s.orders.Apply(ctx, &rpc.AddItem{
 		CommandModel: eventsource.CommandModel{ID: req.OrderID},
 		Item: &rpc.Item{
 			ID:          itemID.String(),
@@ -90,6 +96,9 @@ func (s service) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest) (*rp
 			Description: req.Item.Description,
 		},
 	})
+	if err != nil {
+		return nil, err
+	}
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.OrderID})
 }
 func (s service) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRequest) (*rpc.OrderResponse, error) {
@@ -97,10 +106,13 @@ func (s service) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRequest
 	if err != nil {
 		return nil, err
 	}
-	s.orders.Apply(ctx, &rpc.RemoveItem{
+	_, err = s.orders.Apply(ctx, &rpc.RemoveItem{
 		CommandModel: eventsource.CommandModel{ID: req.OrderID},
 		ItemID:       req.ItemID,
 	})
+	if err != nil {
+		return nil, err
+	}
 	return s.GetOrder(ctx, &rpc.IDRequest{ID: req.OrderID})
 }
 func (s service) GetOrder(ctx context.Context, req *rpc.IDRequest) (*rpc.OrderResponse, error) {

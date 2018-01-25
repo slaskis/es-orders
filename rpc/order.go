@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -42,9 +43,10 @@ func (order *Order) On(event eventsource.Event) error {
 		order.UpdatedAt = v.EventAt()
 
 	case *OrderFulfilled:
+		at := v.EventAt()
 		order.FulfilledBy = v.By
-		*order.FulfilledAt = v.EventAt()
-		order.UpdatedAt = v.EventAt()
+		order.FulfilledAt = &at
+		order.UpdatedAt = at
 		if v.Approved {
 			order.Status = OrderStatus_APPROVED
 		} else {
@@ -89,6 +91,9 @@ func (order *Order) Apply(ctx context.Context, command eventsource.Command) ([]e
 	case *RemoveItem:
 		builder.OrderItemRemoved(cmd.ItemID)
 	case *FulfillOrder:
+		if order.FulfilledAt != nil {
+			return builder.Events, errors.New("already fulfilled")
+		}
 		builder.OrderFulfilled(cmd.By, cmd.Approved)
 	default:
 		log.Printf("unknown command: %T", cmd)

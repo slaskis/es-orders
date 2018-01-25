@@ -37,6 +37,9 @@ func TestService(t *testing.T) {
 	if res.Order == nil {
 		t.Fatalf("order must not be nil")
 	}
+	if res.Order.Status != rpc.OrderStatus_PENDING {
+		t.Fatalf("order must be pending")
+	}
 	if res.Order.CreatedAt.IsZero() {
 		t.Fatalf("order must have created at date. was: %s", res.Order.CreatedAt.Format(time.RFC3339))
 	}
@@ -51,7 +54,34 @@ func TestService(t *testing.T) {
 	}
 	item := res.Order.Items[0]
 	res2, err := svc.RemoveItem(ctx, &rpc.OrderItemRemoveRequest{OrderID: res.Order.ID, ItemID: item.ID})
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if res2.Order.Status != rpc.OrderStatus_PENDING {
+		t.Fatalf("order must be pending")
+	}
 	if len(res2.Order.Items) != 1 {
 		t.Fatalf("order must have 1 items")
+	}
+
+	res3, err := svc.ApproveOrder(ctx, &rpc.OrderApproveRequest{ID: res.Order.ID, FulfilledBy: "Alice"})
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if res3.Order.Status != rpc.OrderStatus_APPROVED {
+		t.Fatalf("order must be approved")
+	}
+
+	_, err = svc.RejectOrder(ctx, &rpc.OrderRejectRequest{ID: res.Order.ID, FulfilledBy: "Alice"})
+	if err.Error() != "already fulfilled" {
+		t.Fatalf("%+v", err)
+	}
+
+	res4, err := svc.GetOrder(ctx, &rpc.IDRequest{ID: res.Order.ID})
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if res4.Order.Status != rpc.OrderStatus_APPROVED {
+		t.Fatalf("order must be approved")
 	}
 }
