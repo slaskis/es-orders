@@ -1,7 +1,11 @@
 
-build: es-orders
+build: generate es-orders
 	@: # sshhh
 .PHONY: build
+
+test: generate es-orders
+	@go test .
+.PHONY: test
 
 generate: rpc/*.pb.go
 	@: # sshhh

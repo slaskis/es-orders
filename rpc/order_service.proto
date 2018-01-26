@@ -39,6 +39,7 @@ message Order {
 
   repeated Item items = 11;
   OrderStatus status = 12;
+  string customerID = 13;
 }
 
 message Item {

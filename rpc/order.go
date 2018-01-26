@@ -12,6 +12,9 @@ import (
 func (order *Order) On(event eventsource.Event) error {
 	switch v := event.(type) {
 	case *OrderCreated:
+		if order.ID != "" {
+			return errors.New("order already exists")
+		}
 		order.ID = v.AggregateID()
 		order.Status = OrderStatus_EMPTY
 		order.CreatedAt = v.EventAt()
@@ -52,6 +55,10 @@ func (order *Order) On(event eventsource.Event) error {
 			order.Status = OrderStatus_REJECTED
 		}
 
+	case *OrderAssignCustomer:
+		order.CustomerID = v.CustomerId
+		order.UpdatedAt = v.EventAt()
+
 	default:
 		return fmt.Errorf("unable to handle event, %v", v)
 	}
@@ -80,6 +87,11 @@ type FulfillOrder struct {
 	By       string
 }
 
+type AssignCustomer struct {
+	eventsource.CommandModel
+	CustomerID string
+}
+
 func (order *Order) Apply(ctx context.Context, command eventsource.Command) ([]eventsource.Event, error) {
 	builder := NewBuilder(command.AggregateID(), int(order.Version))
 	switch cmd := command.(type) {
@@ -94,6 +106,8 @@ func (order *Order) Apply(ctx context.Context, command eventsource.Command) ([]e
 			return builder.Events, errors.New("already fulfilled")
 		}
 		builder.OrderFulfilled(cmd.By, cmd.Approved)
+	case *AssignCustomer:
+		builder.OrderAssignCustomer(cmd.CustomerID)
 	default:
 		log.Printf("unknown command: %T", cmd)
 	}

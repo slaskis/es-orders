@@ -48,7 +48,7 @@ func main() {
 	)
 
 	mux := http.NewServeMux()
-	mux.Handle("/", rpc.NewOrderServiceServer(NewOrderService(orders), nil))
+	mux.Handle("/", rpc.NewOrderServiceServer(NewOrderService(orders, customers), nil))
 	mux.Handle("/", rpc.NewCustomerServiceServer(NewCustomerService(customers), nil))
 
 	addr := fmt.Sprintf("%s:%d", opts.host, opts.port)

@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -11,6 +12,9 @@ import (
 func (customer *Customer) On(event eventsource.Event) error {
 	switch v := event.(type) {
 	case *CustomerCreated:
+		if customer.ID != "" {
+			return errors.New("customer already exist")
+		}
 		customer.ID = v.AggregateID()
 		customer.CreatedAt = v.EventAt()
 		customer.UpdatedAt = v.EventAt()

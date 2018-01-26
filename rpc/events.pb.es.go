@@ -58,6 +58,10 @@ func (m *CustomerCreated) AggregateID() string { return m.Id }
 func (m *CustomerCreated) EventVersion() int   { return int(m.Version) }
 func (m *CustomerCreated) EventAt() time.Time  { return time.Unix(m.At, 0) }
 
+func (m *OrderAssignCustomer) AggregateID() string { return m.Id }
+func (m *OrderAssignCustomer) EventVersion() int   { return int(m.Version) }
+func (m *OrderAssignCustomer) EventAt() time.Time  { return time.Unix(m.At, 0) }
+
 
 func MarshalEvent(event eventsource.Event) ([]byte, error) {
 	container := &EventContainer{}
@@ -83,6 +87,10 @@ func MarshalEvent(event eventsource.Event) ([]byte, error) {
 	case *CustomerCreated:
 		container.Type = 6
 		container.Mg = v
+
+	case *OrderAssignCustomer:
+		container.Type = 7
+		container.Mh = v
 
 	default:
 		return nil, fmt.Errorf("Unhandled type, %v", event)
@@ -120,6 +128,9 @@ func UnmarshalEvent(data []byte) (eventsource.Event, error) {
 
 	case 6:
 		event = container.Mg
+
+	case 7:
+		event = container.Mh
 
 	default:
 		return nil, fmt.Errorf("Unhandled type, %v", container.Type)
@@ -266,6 +277,17 @@ func (b *Builder) OrderFulfilled(by string, approved bool, ) {
 		At:      time.Now().Unix(),
 	By: by,
 	Approved: approved,
+
+	}
+	b.Events = append(b.Events, event)
+}
+
+func (b *Builder) OrderAssignCustomer(customerid string, ) {
+	event := &OrderAssignCustomer{
+		Id:      b.id,
+		Version: b.nextVersion(),
+		At:      time.Now().Unix(),
+	CustomerId: customerid,
 
 	}
 	b.Events = append(b.Events, event)

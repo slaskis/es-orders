@@ -9,11 +9,12 @@ import (
 )
 
 type orderService struct {
-	orders *eventsource.Repository
+	orders    *eventsource.Repository
+	customers *eventsource.Repository
 }
 
-func NewOrderService(orders *eventsource.Repository) rpc.OrderService {
-	return orderService{orders: orders}
+func NewOrderService(orders *eventsource.Repository, customers *eventsource.Repository) rpc.OrderService {
+	return orderService{orders: orders, customers: customers}
 }
 
 func (s orderService) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rpc.OrderResponse, error) {
@@ -50,7 +51,7 @@ func (s orderService) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest)
 	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: orderID.String()})
 }
 func (s orderService) ApproveOrder(ctx context.Context, req *rpc.OrderApproveRequest) (*rpc.OrderResponse, error) {
-	_, err := s.orders.Load(ctx, req.ID)
+	agg, err := s.orders.Load(ctx, req.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +64,33 @@ func (s orderService) ApproveOrder(ctx context.Context, req *rpc.OrderApproveReq
 		return nil, err
 	}
 
-	// TODO create customer (if not exists) and for each item generate
-	//		  events on the customer
+	// create customer (if not exists)
+	order := agg.(*rpc.Order)
+	if order.CustomerID != "" {
+		customerID, err := ulid.New(ulid.Now(), entropy)
+		if err != nil {
+			return nil, err
+		}
+		_, err = s.customers.Apply(ctx, &rpc.CreateCustomer{
+			CommandModel: eventsource.CommandModel{ID: customerID.String()},
+			Name:         "new customer",
+		})
+		if err != nil {
+			return nil, err
+		}
+		_, err = s.orders.Apply(ctx, &rpc.AssignCustomer{
+			CommandModel: eventsource.CommandModel{ID: order.ID},
+			CustomerID:   customerID.String(),
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// TODO add oneOf to Item for different kinds of items
+	// then switch() on them here and generate s.customer.Apply()
+	// for _, item := range order.Items {
+	// }
 
 	return s.GetOrder(ctx, &rpc.GetOrderRequest{ID: req.ID})
 }

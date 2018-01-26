@@ -28,6 +28,7 @@
 		OrderItemAdded
 		OrderItemRemoved
 		OrderFulfilled
+		OrderAssignCustomer
 		CustomerCreated
 		EventContainer
 */
