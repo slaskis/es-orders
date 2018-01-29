@@ -4,7 +4,7 @@ build: generate es-orders
 .PHONY: build
 
 test: generate es-orders
-	@go test .
+	@go test -cover .
 .PHONY: test
 
 generate: rpc/*.pb.go
