@@ -4,7 +4,8 @@ build: generate es-orders
 .PHONY: build
 
 test: generate es-orders
-	@go test -cover .
+	@go test -coverprofile=coverage.out .
+	@go tool cover -func=coverage.out
 .PHONY: test
 
 generate: rpc/*.pb.go
