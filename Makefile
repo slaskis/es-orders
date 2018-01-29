@@ -8,13 +8,9 @@ test: generate es-orders
 	@go tool cover -func=coverage.out
 .PHONY: test
 
-generate: rpc/*.pb.go
+generate: $(wildcard rpc/*.pb.go)
 	@: # sshhh
 .PHONY: generate
-
-fix: rpc/*.twirp.go
-	@: # sshhh
-.PHONY: fix
 
 vendor:
 	dep ensure
@@ -25,7 +21,5 @@ es-orders: $(wildcard *.go **/*.go)
 
 %.pb.go: %.proto generate.go
 	go generate .
-
-%.twirp.go: %.proto
-	sed -i.tmp s@github.com/golang/protobuf/@github.com/gogo/protobuf/@ $@
-	rm $@.tmp
+	sed -i.tmp s@github.com/golang/protobuf/@github.com/gogo/protobuf/@ $(wildcard rpc/*.twirp.go)
+	rm rpc/*.tmp
