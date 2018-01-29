@@ -12,6 +12,10 @@ generate: rpc/*.pb.go
 	@: # sshhh
 .PHONY: generate
 
+fix: rpc/*.twirp.go
+	@: # sshhh
+.PHONY: fix
+
 vendor:
 	dep ensure
 .PHONY: vendor
@@ -21,3 +25,7 @@ es-orders: $(wildcard *.go **/*.go)
 
 %.pb.go: %.proto generate.go
 	go generate .
+
+%.twirp.go: %.proto
+	sed -i.tmp s@github.com/golang/protobuf/@github.com/gogo/protobuf/@ $@
+	rm $@.tmp
