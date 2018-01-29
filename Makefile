@@ -15,7 +15,7 @@ vendor:
 	dep ensure
 .PHONY: vendor
 
-es-orders: *go
+es-orders: $(wildcard *.go **/*.go)
 	go build .
 
 %.pb.go: %.proto generate.go

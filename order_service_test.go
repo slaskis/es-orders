@@ -80,8 +80,8 @@ func TestOrderService(t *testing.T) {
 	if res3.Order.Status != rpc.OrderStatus_APPROVED {
 		t.Fatalf("order must be approved")
 	}
-	if res3.Order.CustomerID != "" {
-		t.Fatalf("order must not have customer id")
+	if res3.Order.CustomerID == "" {
+		t.Fatalf("order must have customer id")
 	}
 
 	ces1, err := csvc.GetCustomer(ctx, &rpc.GetCustomerRequest{ID: res3.Order.CustomerID})

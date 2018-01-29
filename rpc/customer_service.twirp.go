@@ -19,8 +19,8 @@ import ioutil "io/ioutil"
 import log "log"
 import http "net/http"
 
-import jsonpb "github.com/golang/protobuf/jsonpb"
-import proto "github.com/golang/protobuf/proto"
+import jsonpb "github.com/gogo/protobuf/jsonpb"
+import proto "github.com/gogo/protobuf/proto"
 import twirp "github.com/twitchtv/twirp"
 import ctxsetters "github.com/twitchtv/twirp/ctxsetters"
 

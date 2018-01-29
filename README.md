@@ -14,3 +14,17 @@ go build .
   * Or are we supposed to always build a single repo (per org)?
 * Try side effects (send email, add or update external api)
   * using observers?
+
+## Flow chart
+
+```
+  +-----+                  +-----+
+  | REQ |                  | RES |
+  +--+--+                  +--^--+
+     |                        |
+     |                        |
+  +--v--+      +-----+     +--+--+
+  | CMD +------> EVT ++----> AGG |
+  +-----+      +-----+|    +-----+
+                +-----+
+```

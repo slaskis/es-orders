@@ -66,7 +66,7 @@ func (s orderService) ApproveOrder(ctx context.Context, req *rpc.OrderApproveReq
 
 	// create customer (if not exists)
 	order := agg.(*rpc.Order)
-	if order.CustomerID != "" {
+	if order.CustomerID == "" {
 		customerID, err := ulid.New(ulid.Now(), entropy)
 		if err != nil {
 			return nil, err
