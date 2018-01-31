@@ -21,7 +21,11 @@ func TestServer(t *testing.T) {
 		eventsource.WithSerializer(rpc.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
-	srv := createServiceHTTPHandler(orders, customers)
+	users := eventsource.New(&rpc.User{},
+		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithDebug(os.Stderr),
+	)
+	srv := createServiceHTTPHandler(orders, customers, users)
 
 	ores1 := rpc.OrderResponse{}
 	request(t, srv, rpc.OrderServicePathPrefix+"CreateOrder", &rpc.OrderNewRequest{}, &ores1)

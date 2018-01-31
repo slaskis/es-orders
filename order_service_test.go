@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/altairsix/eventsource"
 	"github.com/slaskis/es-orders/rpc"
@@ -21,14 +20,21 @@ func TestOrderService(t *testing.T) {
 		eventsource.WithObservers(obs),
 	)
 
+	users := eventsource.New(&rpc.User{},
+		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithDebug(os.Stdout),
+		eventsource.WithObservers(obs),
+	)
+
 	customers := eventsource.New(&rpc.Customer{},
 		eventsource.WithSerializer(rpc.NewSerializer()),
 		eventsource.WithDebug(os.Stdout),
 		eventsource.WithObservers(obs),
 	)
 
-	osvc := NewOrderService(orders, customers)
+	osvc := NewOrderService(orders, customers, users)
 	csvc := NewCustomerService(customers)
+	usvc := NewUserService(users)
 
 	ctx := context.Background()
 	res, err := osvc.CreateOrder(ctx, &rpc.OrderNewRequest{
@@ -124,42 +130,9 @@ func TestOrderService(t *testing.T) {
 	if res4.Order.Status != rpc.OrderStatus_APPROVED {
 		t.Fatalf("order must be approved")
 	}
-}
 
-func TestOrderTime(t *testing.T) {
-	// testing how long it takes to replay N events
-	t.Skip()
-	orders := eventsource.New(&rpc.Order{},
-		eventsource.WithSerializer(rpc.NewSerializer()),
-	)
-	customers := eventsource.New(&rpc.Customer{},
-		eventsource.WithSerializer(rpc.NewSerializer()),
-	)
-
-	osvc := NewOrderService(orders, customers)
-	benchOrder(t, 1, osvc)
-	benchOrder(t, 10, osvc)
-	benchOrder(t, 100, osvc)
-	benchOrder(t, 1000, osvc)
-	benchOrder(t, 10000, osvc) // ~4ms
-	t.Fail()
-}
-
-func benchOrder(t *testing.T, x int, svc rpc.OrderService) {
-	ctx := context.Background()
-	var items []*rpc.NewItem
-	for i := 0; i < x; i++ {
-		items = append(items, &rpc.NewItem{Type: rpc.ItemType_ITEM_B})
+	_, err = usvc.GetUser(ctx, &rpc.GetUserRequest{ID: ""})
+	if !eventsource.IsNotFound(err) {
+		t.Fatalf("%+v", err)
 	}
-	res, err := svc.CreateOrder(ctx, &rpc.OrderNewRequest{Items: items})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	n := time.Now()
-	_, err = svc.GetOrder(ctx, &rpc.GetOrderRequest{ID: res.Order.ID})
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Logf("took %s", time.Since(n))
 }

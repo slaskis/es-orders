@@ -11,10 +11,11 @@ import (
 type orderService struct {
 	orders    *eventsource.Repository
 	customers *eventsource.Repository
+	users     *eventsource.Repository
 }
 
-func NewOrderService(orders *eventsource.Repository, customers *eventsource.Repository) rpc.OrderService {
-	return orderService{orders: orders, customers: customers}
+func NewOrderService(orders, customers, users *eventsource.Repository) rpc.OrderService {
+	return orderService{orders: orders, customers: customers, users: users}
 }
 
 func (s orderService) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest) (*rpc.OrderResponse, error) {

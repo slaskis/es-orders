@@ -51,7 +51,13 @@ func main() {
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	mux := createServiceHTTPHandler(orders, customers)
+	users := eventsource.New(&rpc.User{},
+		eventsource.WithStore(store),
+		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithDebug(os.Stdout),
+	)
+
+	mux := createServiceHTTPHandler(orders, customers, users)
 	addr := fmt.Sprintf("%s:%d", opts.host, opts.port)
 	log.Printf("listening at %s", addr)
 	err = http.ListenAndServe(addr, mux)
@@ -72,20 +78,23 @@ func logger() *twirp.ServerHooks {
 	}
 }
 
-func createServiceHTTPHandler(orders, customers *eventsource.Repository) http.Handler {
+func createServiceHTTPHandler(orders, customers, users *eventsource.Repository) http.Handler {
 	return handleServers(
-		rpc.NewOrderServiceServer(NewOrderService(orders, customers), logger()),
+		rpc.NewOrderServiceServer(NewOrderService(orders, customers, users), logger()),
 		rpc.NewCustomerServiceServer(NewCustomerService(customers), logger()),
+		rpc.NewUserServiceServer(NewUserService(users), logger()),
 	)
 }
 
-func handleServers(orders rpc.TwirpServer, customers rpc.TwirpServer) http.HandlerFunc {
+func handleServers(orders, customers, users rpc.TwirpServer) http.HandlerFunc {
 	notFound := http.NotFoundHandler()
 	return func(res http.ResponseWriter, req *http.Request) {
 		if strings.HasPrefix(req.URL.Path, rpc.OrderServicePathPrefix) {
 			orders.ServeHTTP(res, req)
 		} else if strings.HasPrefix(req.URL.Path, rpc.CustomerServicePathPrefix) {
 			customers.ServeHTTP(res, req)
+		} else if strings.HasPrefix(req.URL.Path, rpc.UserServicePathPrefix) {
+			users.ServeHTTP(res, req)
 		} else {
 			notFound.ServeHTTP(res, req)
 		}

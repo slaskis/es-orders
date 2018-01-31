@@ -8,6 +8,7 @@ This code was generated with github.com/twitchtv/twirp/protoc-gen-twirp v5.0.0.
 It is generated from these files:
 	rpc/customer_service.proto
 	rpc/order_service.proto
+	rpc/user_service.proto
 */
 package rpc
 
