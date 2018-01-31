@@ -14,6 +14,7 @@
 		CustomerResponse
 		GetCustomerRequest
 		Order
+		OrderItem
 		Item
 		NewItem
 		OrderNewRequest
@@ -24,7 +25,8 @@
 		GetOrderRequest
 		OrderResponse
 		OrderCreated
-		OrderItemAdded
+		OrderItemAAdded
+		OrderItemBAdded
 		OrderItemRemoved
 		OrderFulfilled
 		OrderAssignCustomer

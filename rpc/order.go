@@ -10,6 +10,7 @@ import (
 )
 
 func (order *Order) On(event eventsource.Event) error {
+	// log.Printf("%T(%+v)", event, event)
 	switch v := event.(type) {
 	case *OrderCreated:
 		if order.ID != "" {
@@ -20,12 +21,21 @@ func (order *Order) On(event eventsource.Event) error {
 		order.CreatedAt = v.EventAt()
 		order.UpdatedAt = v.EventAt()
 
-	case *OrderItemAdded:
-		item := &Item{
-			ID:          v.ItemId,
-			SKU:         v.Sku,
-			Description: v.Description,
-			AddedAt:     v.EventAt(),
+	case *OrderItemAAdded:
+		item := &OrderItem{
+			Quantity:  1,
+			UpdatedAt: v.EventAt(),
+			Item:      &Item{Type: ItemType_ITEM_A, ID: v.ItemA},
+		}
+		order.Status = OrderStatus_PENDING
+		order.Items = append(order.Items, item)
+		order.UpdatedAt = v.EventAt()
+
+	case *OrderItemBAdded:
+		item := &OrderItem{
+			Quantity:  1,
+			UpdatedAt: v.EventAt(),
+			Item:      &Item{Type: ItemType_ITEM_B, ID: v.ItemB},
 		}
 		order.Status = OrderStatus_PENDING
 		order.Items = append(order.Items, item)
@@ -66,28 +76,28 @@ func (order *Order) On(event eventsource.Event) error {
 	return nil
 }
 
-type CreateOrder struct {
+type CommandCreateOrder struct {
 	eventsource.CommandModel
 	Name string
 }
 
-type AddItem struct {
+type CommandAddItem struct {
 	eventsource.CommandModel
-	Item *Item
+	Type ItemType
 }
 
-type RemoveItem struct {
+type CommandRemoveItem struct {
 	eventsource.CommandModel
 	ItemID string
 }
 
-type FulfillOrder struct {
+type CommandFulfillOrder struct {
 	eventsource.CommandModel
 	Approved bool
 	By       string
 }
 
-type AssignCustomer struct {
+type CommandAssignCustomer struct {
 	eventsource.CommandModel
 	CustomerID string
 }
@@ -95,18 +105,23 @@ type AssignCustomer struct {
 func (order *Order) Apply(ctx context.Context, command eventsource.Command) ([]eventsource.Event, error) {
 	builder := NewBuilder(command.AggregateID(), int(order.Version))
 	switch cmd := command.(type) {
-	case *CreateOrder:
+	case *CommandCreateOrder:
 		builder.OrderCreated()
-	case *AddItem:
-		builder.OrderItemAdded(cmd.Item.ID, cmd.Item.SKU, cmd.Item.Description)
-	case *RemoveItem:
+	case *CommandAddItem:
+		switch cmd.Type {
+		case ItemType_ITEM_A:
+			builder.OrderItemAAdded("1")
+		case ItemType_ITEM_B:
+			builder.OrderItemBAdded("2")
+		}
+	case *CommandRemoveItem:
 		builder.OrderItemRemoved(cmd.ItemID)
-	case *FulfillOrder:
+	case *CommandFulfillOrder:
 		if order.FulfilledAt != nil {
 			return builder.Events, errors.New("already fulfilled")
 		}
 		builder.OrderFulfilled(cmd.By, cmd.Approved)
-	case *AssignCustomer:
+	case *CommandAssignCustomer:
 		builder.OrderAssignCustomer(cmd.CustomerID)
 	default:
 		log.Printf("unknown command: %T", cmd)

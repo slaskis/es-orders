@@ -26,7 +26,7 @@ func (customer *Customer) On(event eventsource.Event) error {
 	return nil
 }
 
-type CreateCustomer struct {
+type CommandCreateCustomer struct {
 	eventsource.CommandModel
 	Name string
 }
@@ -34,7 +34,7 @@ type CreateCustomer struct {
 func (customer *Customer) Apply(ctx context.Context, command eventsource.Command) ([]eventsource.Event, error) {
 	builder := NewBuilder(command.AggregateID(), int(customer.Version))
 	switch cmd := command.(type) {
-	case *CreateCustomer:
+	case *CommandCreateCustomer:
 		builder.CustomerCreated(cmd.Name)
 	default:
 		log.Printf("unknown command: %T", cmd)

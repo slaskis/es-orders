@@ -23,7 +23,7 @@ func (s orderService) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest)
 		return nil, err
 	}
 
-	_, err = s.orders.Apply(ctx, &rpc.CreateOrder{
+	_, err = s.orders.Apply(ctx, &rpc.CommandCreateOrder{
 		CommandModel: eventsource.CommandModel{ID: orderID.String()},
 	})
 	if err != nil {
@@ -31,17 +31,12 @@ func (s orderService) CreateOrder(ctx context.Context, req *rpc.OrderNewRequest)
 	}
 
 	for _, i := range req.Items {
-		itemID, err := ulid.New(ulid.Now(), entropy)
 		if err != nil {
 			return nil, err
 		}
-		_, err = s.orders.Apply(ctx, &rpc.AddItem{
+		_, err = s.orders.Apply(ctx, &rpc.CommandAddItem{
 			CommandModel: eventsource.CommandModel{ID: orderID.String()},
-			Item: &rpc.Item{
-				ID:          itemID.String(),
-				SKU:         i.SKU,
-				Description: i.Description,
-			},
+			Type:         i.Type,
 		})
 		if err != nil {
 			return nil, err
@@ -55,7 +50,7 @@ func (s orderService) ApproveOrder(ctx context.Context, req *rpc.OrderApproveReq
 	if err != nil {
 		return nil, err
 	}
-	_, err = s.orders.Apply(ctx, &rpc.FulfillOrder{
+	_, err = s.orders.Apply(ctx, &rpc.CommandFulfillOrder{
 		CommandModel: eventsource.CommandModel{ID: req.ID},
 		By:           req.FulfilledBy,
 		Approved:     true,
@@ -71,14 +66,14 @@ func (s orderService) ApproveOrder(ctx context.Context, req *rpc.OrderApproveReq
 		if err != nil {
 			return nil, err
 		}
-		_, err = s.customers.Apply(ctx, &rpc.CreateCustomer{
+		_, err = s.customers.Apply(ctx, &rpc.CommandCreateCustomer{
 			CommandModel: eventsource.CommandModel{ID: customerID.String()},
 			Name:         "new customer",
 		})
 		if err != nil {
 			return nil, err
 		}
-		_, err = s.orders.Apply(ctx, &rpc.AssignCustomer{
+		_, err = s.orders.Apply(ctx, &rpc.CommandAssignCustomer{
 			CommandModel: eventsource.CommandModel{ID: order.ID},
 			CustomerID:   customerID.String(),
 		})
@@ -99,7 +94,7 @@ func (s orderService) RejectOrder(ctx context.Context, req *rpc.OrderRejectReque
 	if err != nil {
 		return nil, err
 	}
-	_, err = s.orders.Apply(ctx, &rpc.FulfillOrder{
+	_, err = s.orders.Apply(ctx, &rpc.CommandFulfillOrder{
 		CommandModel: eventsource.CommandModel{ID: req.ID},
 		By:           req.FulfilledBy,
 		Approved:     false,
@@ -114,17 +109,9 @@ func (s orderService) AddItem(ctx context.Context, req *rpc.OrderItemAddRequest)
 	if err != nil {
 		return nil, err
 	}
-	itemID, err := ulid.New(ulid.Now(), entropy)
-	if err != nil {
-		return nil, err
-	}
-	_, err = s.orders.Apply(ctx, &rpc.AddItem{
+	_, err = s.orders.Apply(ctx, &rpc.CommandAddItem{
 		CommandModel: eventsource.CommandModel{ID: req.OrderID},
-		Item: &rpc.Item{
-			ID:          itemID.String(),
-			SKU:         req.Item.SKU,
-			Description: req.Item.Description,
-		},
+		Type:         req.Item.Type,
 	})
 	if err != nil {
 		return nil, err
@@ -136,9 +123,9 @@ func (s orderService) RemoveItem(ctx context.Context, req *rpc.OrderItemRemoveRe
 	if err != nil {
 		return nil, err
 	}
-	_, err = s.orders.Apply(ctx, &rpc.RemoveItem{
+	_, err = s.orders.Apply(ctx, &rpc.CommandRemoveItem{
 		CommandModel: eventsource.CommandModel{ID: req.OrderID},
-		ItemID:       req.ItemID,
+		ItemID:       req.OrderItemID,
 	})
 	if err != nil {
 		return nil, err

@@ -37,35 +37,45 @@ message Order {
   google.protobuf.Timestamp fulfilledAt = 9 [(gogoproto.stdtime) = true];
   string fulfilledBy = 10;
 
-  repeated Item items = 11;
+  repeated OrderItem items = 11;
   OrderStatus status = 12;
   string customerID = 13;
 }
 
+message OrderItem {
+  string ID = 1;
+  int32 quantity = 2;
+  google.protobuf.Timestamp updatedAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  Item item = 3;
+}
+
+enum ItemType {
+  ITEM_UNKNOWN = 0;
+  ITEM_A = 1;
+  ITEM_B = 2;
+}
+
 message Item {
   string ID = 1;
-  string SKU = 2;
-  string description = 3;
-  google.protobuf.Timestamp addedAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  ItemType type = 2;
+
 }
 
 message NewItem {
-  string SKU = 1;
-  string description = 2;
+  ItemType type = 1;
 }
-
 message OrderNewRequest {
   repeated NewItem items = 2;
 }
 
 message OrderItemAddRequest {
-  string OrderID = 1;
-  Item item = 2;
+  string orderID = 1;
+  NewItem item = 2;
 }
 
 message OrderItemRemoveRequest {
-  string OrderID = 1;
-  string ItemID = 2;
+  string orderID = 1;
+  string orderItemID = 2;
 }
 
 message OrderApproveRequest {

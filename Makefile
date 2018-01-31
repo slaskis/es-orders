@@ -8,6 +8,10 @@ test: generate es-orders
 	@go tool cover -func=coverage.out
 .PHONY: test
 
+bench: generate es-orders
+	@go test -bench=.
+.PHONY: bench
+
 generate: $(wildcard rpc/*.pb.go)
 	@: # sshhh
 .PHONY: generate

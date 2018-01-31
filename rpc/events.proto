@@ -16,13 +16,18 @@ message order_created {
   int64 at = 3;
 }
 
-message order_item_added {
+message order_item_a_added {
   string id = 1;
   int32 version = 2;
   int64 at = 3;
-  string item_id = 4;
-  string sku = 5;
-  string description = 6;
+  string item_a = 4;
+}
+
+message order_item_b_added {
+  string id = 1;
+  int32 version = 2;
+  int64 at = 3;
+  string item_b = 4;
 }
 
 message order_item_removed {
@@ -55,8 +60,9 @@ message event_container {
   int32 type = 1;
   order_created ma = 2;
   order_fulfilled mc = 3;
-  order_item_added me = 4;
   order_item_removed mf = 5;
   customer_created mg = 6;
   order_assign_customer mh = 7;
+  order_item_a_added ia = 101;
+  order_item_b_added ib = 102;
 }

@@ -47,58 +47,82 @@ func (m *OrderCreated) GetAt() int64 {
 	return 0
 }
 
-type OrderItemAdded struct {
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Version     int32  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
-	At          int64  `protobuf:"varint,3,opt,name=at,proto3" json:"at,omitempty"`
-	ItemId      string `protobuf:"bytes,4,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
-	Sku         string `protobuf:"bytes,5,opt,name=sku,proto3" json:"sku,omitempty"`
-	Description string `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+type OrderItemAAdded struct {
+	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Version int32  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	At      int64  `protobuf:"varint,3,opt,name=at,proto3" json:"at,omitempty"`
+	ItemA   string `protobuf:"bytes,4,opt,name=item_a,json=itemA,proto3" json:"item_a,omitempty"`
 }
 
-func (m *OrderItemAdded) Reset()                    { *m = OrderItemAdded{} }
-func (m *OrderItemAdded) String() string            { return proto.CompactTextString(m) }
-func (*OrderItemAdded) ProtoMessage()               {}
-func (*OrderItemAdded) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{1} }
+func (m *OrderItemAAdded) Reset()                    { *m = OrderItemAAdded{} }
+func (m *OrderItemAAdded) String() string            { return proto.CompactTextString(m) }
+func (*OrderItemAAdded) ProtoMessage()               {}
+func (*OrderItemAAdded) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{1} }
 
-func (m *OrderItemAdded) GetId() string {
+func (m *OrderItemAAdded) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-func (m *OrderItemAdded) GetVersion() int32 {
+func (m *OrderItemAAdded) GetVersion() int32 {
 	if m != nil {
 		return m.Version
 	}
 	return 0
 }
 
-func (m *OrderItemAdded) GetAt() int64 {
+func (m *OrderItemAAdded) GetAt() int64 {
 	if m != nil {
 		return m.At
 	}
 	return 0
 }
 
-func (m *OrderItemAdded) GetItemId() string {
+func (m *OrderItemAAdded) GetItemA() string {
 	if m != nil {
-		return m.ItemId
+		return m.ItemA
 	}
 	return ""
 }
 
-func (m *OrderItemAdded) GetSku() string {
+type OrderItemBAdded struct {
+	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Version int32  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	At      int64  `protobuf:"varint,3,opt,name=at,proto3" json:"at,omitempty"`
+	ItemB   string `protobuf:"bytes,4,opt,name=item_b,json=itemB,proto3" json:"item_b,omitempty"`
+}
+
+func (m *OrderItemBAdded) Reset()                    { *m = OrderItemBAdded{} }
+func (m *OrderItemBAdded) String() string            { return proto.CompactTextString(m) }
+func (*OrderItemBAdded) ProtoMessage()               {}
+func (*OrderItemBAdded) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{2} }
+
+func (m *OrderItemBAdded) GetId() string {
 	if m != nil {
-		return m.Sku
+		return m.Id
 	}
 	return ""
 }
 
-func (m *OrderItemAdded) GetDescription() string {
+func (m *OrderItemBAdded) GetVersion() int32 {
 	if m != nil {
-		return m.Description
+		return m.Version
+	}
+	return 0
+}
+
+func (m *OrderItemBAdded) GetAt() int64 {
+	if m != nil {
+		return m.At
+	}
+	return 0
+}
+
+func (m *OrderItemBAdded) GetItemB() string {
+	if m != nil {
+		return m.ItemB
 	}
 	return ""
 }
@@ -113,7 +137,7 @@ type OrderItemRemoved struct {
 func (m *OrderItemRemoved) Reset()                    { *m = OrderItemRemoved{} }
 func (m *OrderItemRemoved) String() string            { return proto.CompactTextString(m) }
 func (*OrderItemRemoved) ProtoMessage()               {}
-func (*OrderItemRemoved) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{2} }
+func (*OrderItemRemoved) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{3} }
 
 func (m *OrderItemRemoved) GetId() string {
 	if m != nil {
@@ -154,7 +178,7 @@ type OrderFulfilled struct {
 func (m *OrderFulfilled) Reset()                    { *m = OrderFulfilled{} }
 func (m *OrderFulfilled) String() string            { return proto.CompactTextString(m) }
 func (*OrderFulfilled) ProtoMessage()               {}
-func (*OrderFulfilled) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{3} }
+func (*OrderFulfilled) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{4} }
 
 func (m *OrderFulfilled) GetId() string {
 	if m != nil {
@@ -201,7 +225,7 @@ type OrderAssignCustomer struct {
 func (m *OrderAssignCustomer) Reset()                    { *m = OrderAssignCustomer{} }
 func (m *OrderAssignCustomer) String() string            { return proto.CompactTextString(m) }
 func (*OrderAssignCustomer) ProtoMessage()               {}
-func (*OrderAssignCustomer) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{4} }
+func (*OrderAssignCustomer) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{5} }
 
 func (m *OrderAssignCustomer) GetId() string {
 	if m != nil {
@@ -241,7 +265,7 @@ type CustomerCreated struct {
 func (m *CustomerCreated) Reset()                    { *m = CustomerCreated{} }
 func (m *CustomerCreated) String() string            { return proto.CompactTextString(m) }
 func (*CustomerCreated) ProtoMessage()               {}
-func (*CustomerCreated) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{5} }
+func (*CustomerCreated) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{6} }
 
 func (m *CustomerCreated) GetId() string {
 	if m != nil {
@@ -275,16 +299,17 @@ type EventContainer struct {
 	Type int32                `protobuf:"varint,1,opt,name=type,proto3" json:"type,omitempty"`
 	Ma   *OrderCreated        `protobuf:"bytes,2,opt,name=ma" json:"ma,omitempty"`
 	Mc   *OrderFulfilled      `protobuf:"bytes,3,opt,name=mc" json:"mc,omitempty"`
-	Me   *OrderItemAdded      `protobuf:"bytes,4,opt,name=me" json:"me,omitempty"`
 	Mf   *OrderItemRemoved    `protobuf:"bytes,5,opt,name=mf" json:"mf,omitempty"`
 	Mg   *CustomerCreated     `protobuf:"bytes,6,opt,name=mg" json:"mg,omitempty"`
 	Mh   *OrderAssignCustomer `protobuf:"bytes,7,opt,name=mh" json:"mh,omitempty"`
+	Ia   *OrderItemAAdded     `protobuf:"bytes,101,opt,name=ia" json:"ia,omitempty"`
+	Ib   *OrderItemBAdded     `protobuf:"bytes,102,opt,name=ib" json:"ib,omitempty"`
 }
 
 func (m *EventContainer) Reset()                    { *m = EventContainer{} }
 func (m *EventContainer) String() string            { return proto.CompactTextString(m) }
 func (*EventContainer) ProtoMessage()               {}
-func (*EventContainer) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{6} }
+func (*EventContainer) Descriptor() ([]byte, []int) { return fileDescriptorEvents, []int{7} }
 
 func (m *EventContainer) GetType() int32 {
 	if m != nil {
@@ -303,13 +328,6 @@ func (m *EventContainer) GetMa() *OrderCreated {
 func (m *EventContainer) GetMc() *OrderFulfilled {
 	if m != nil {
 		return m.Mc
-	}
-	return nil
-}
-
-func (m *EventContainer) GetMe() *OrderItemAdded {
-	if m != nil {
-		return m.Me
 	}
 	return nil
 }
@@ -335,9 +353,24 @@ func (m *EventContainer) GetMh() *OrderAssignCustomer {
 	return nil
 }
 
+func (m *EventContainer) GetIa() *OrderItemAAdded {
+	if m != nil {
+		return m.Ia
+	}
+	return nil
+}
+
+func (m *EventContainer) GetIb() *OrderItemBAdded {
+	if m != nil {
+		return m.Ib
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*OrderCreated)(nil), "rpc.order_created")
-	proto.RegisterType((*OrderItemAdded)(nil), "rpc.order_item_added")
+	proto.RegisterType((*OrderItemAAdded)(nil), "rpc.order_item_a_added")
+	proto.RegisterType((*OrderItemBAdded)(nil), "rpc.order_item_b_added")
 	proto.RegisterType((*OrderItemRemoved)(nil), "rpc.order_item_removed")
 	proto.RegisterType((*OrderFulfilled)(nil), "rpc.order_fulfilled")
 	proto.RegisterType((*OrderAssignCustomer)(nil), "rpc.order_assign_customer")
@@ -378,7 +411,7 @@ func (m *OrderCreated) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *OrderItemAdded) Marshal() (dAtA []byte, err error) {
+func (m *OrderItemAAdded) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -388,7 +421,7 @@ func (m *OrderItemAdded) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *OrderItemAdded) MarshalTo(dAtA []byte) (int, error) {
+func (m *OrderItemAAdded) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -409,23 +442,51 @@ func (m *OrderItemAdded) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintEvents(dAtA, i, uint64(m.At))
 	}
-	if len(m.ItemId) > 0 {
+	if len(m.ItemA) > 0 {
 		dAtA[i] = 0x22
 		i++
-		i = encodeVarintEvents(dAtA, i, uint64(len(m.ItemId)))
-		i += copy(dAtA[i:], m.ItemId)
+		i = encodeVarintEvents(dAtA, i, uint64(len(m.ItemA)))
+		i += copy(dAtA[i:], m.ItemA)
 	}
-	if len(m.Sku) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintEvents(dAtA, i, uint64(len(m.Sku)))
-		i += copy(dAtA[i:], m.Sku)
+	return i, nil
+}
+
+func (m *OrderItemBAdded) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
 	}
-	if len(m.Description) > 0 {
-		dAtA[i] = 0x32
+	return dAtA[:n], nil
+}
+
+func (m *OrderItemBAdded) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		dAtA[i] = 0xa
 		i++
-		i = encodeVarintEvents(dAtA, i, uint64(len(m.Description)))
-		i += copy(dAtA[i:], m.Description)
+		i = encodeVarintEvents(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
+	}
+	if m.Version != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintEvents(dAtA, i, uint64(m.Version))
+	}
+	if m.At != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintEvents(dAtA, i, uint64(m.At))
+	}
+	if len(m.ItemB) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintEvents(dAtA, i, uint64(len(m.ItemB)))
+		i += copy(dAtA[i:], m.ItemB)
 	}
 	return i, nil
 }
@@ -640,45 +701,59 @@ func (m *EventContainer) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n2
 	}
-	if m.Me != nil {
-		dAtA[i] = 0x22
+	if m.Mf != nil {
+		dAtA[i] = 0x2a
 		i++
-		i = encodeVarintEvents(dAtA, i, uint64(m.Me.Size()))
-		n3, err := m.Me.MarshalTo(dAtA[i:])
+		i = encodeVarintEvents(dAtA, i, uint64(m.Mf.Size()))
+		n3, err := m.Mf.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n3
 	}
-	if m.Mf != nil {
-		dAtA[i] = 0x2a
+	if m.Mg != nil {
+		dAtA[i] = 0x32
 		i++
-		i = encodeVarintEvents(dAtA, i, uint64(m.Mf.Size()))
-		n4, err := m.Mf.MarshalTo(dAtA[i:])
+		i = encodeVarintEvents(dAtA, i, uint64(m.Mg.Size()))
+		n4, err := m.Mg.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n4
 	}
-	if m.Mg != nil {
-		dAtA[i] = 0x32
+	if m.Mh != nil {
+		dAtA[i] = 0x3a
 		i++
-		i = encodeVarintEvents(dAtA, i, uint64(m.Mg.Size()))
-		n5, err := m.Mg.MarshalTo(dAtA[i:])
+		i = encodeVarintEvents(dAtA, i, uint64(m.Mh.Size()))
+		n5, err := m.Mh.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n5
 	}
-	if m.Mh != nil {
-		dAtA[i] = 0x3a
+	if m.Ia != nil {
+		dAtA[i] = 0xaa
 		i++
-		i = encodeVarintEvents(dAtA, i, uint64(m.Mh.Size()))
-		n6, err := m.Mh.MarshalTo(dAtA[i:])
+		dAtA[i] = 0x6
+		i++
+		i = encodeVarintEvents(dAtA, i, uint64(m.Ia.Size()))
+		n6, err := m.Ia.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n6
+	}
+	if m.Ib != nil {
+		dAtA[i] = 0xb2
+		i++
+		dAtA[i] = 0x6
+		i++
+		i = encodeVarintEvents(dAtA, i, uint64(m.Ib.Size()))
+		n7, err := m.Ib.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
 	}
 	return i, nil
 }
@@ -708,7 +783,7 @@ func (m *OrderCreated) Size() (n int) {
 	return n
 }
 
-func (m *OrderItemAdded) Size() (n int) {
+func (m *OrderItemAAdded) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Id)
@@ -721,15 +796,27 @@ func (m *OrderItemAdded) Size() (n int) {
 	if m.At != 0 {
 		n += 1 + sovEvents(uint64(m.At))
 	}
-	l = len(m.ItemId)
+	l = len(m.ItemA)
 	if l > 0 {
 		n += 1 + l + sovEvents(uint64(l))
 	}
-	l = len(m.Sku)
+	return n
+}
+
+func (m *OrderItemBAdded) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Id)
 	if l > 0 {
 		n += 1 + l + sovEvents(uint64(l))
 	}
-	l = len(m.Description)
+	if m.Version != 0 {
+		n += 1 + sovEvents(uint64(m.Version))
+	}
+	if m.At != 0 {
+		n += 1 + sovEvents(uint64(m.At))
+	}
+	l = len(m.ItemB)
 	if l > 0 {
 		n += 1 + l + sovEvents(uint64(l))
 	}
@@ -833,10 +920,6 @@ func (m *EventContainer) Size() (n int) {
 		l = m.Mc.Size()
 		n += 1 + l + sovEvents(uint64(l))
 	}
-	if m.Me != nil {
-		l = m.Me.Size()
-		n += 1 + l + sovEvents(uint64(l))
-	}
 	if m.Mf != nil {
 		l = m.Mf.Size()
 		n += 1 + l + sovEvents(uint64(l))
@@ -848,6 +931,14 @@ func (m *EventContainer) Size() (n int) {
 	if m.Mh != nil {
 		l = m.Mh.Size()
 		n += 1 + l + sovEvents(uint64(l))
+	}
+	if m.Ia != nil {
+		l = m.Ia.Size()
+		n += 2 + l + sovEvents(uint64(l))
+	}
+	if m.Ib != nil {
+		l = m.Ib.Size()
+		n += 2 + l + sovEvents(uint64(l))
 	}
 	return n
 }
@@ -982,7 +1073,7 @@ func (m *OrderCreated) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *OrderItemAdded) Unmarshal(dAtA []byte) error {
+func (m *OrderItemAAdded) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1005,10 +1096,10 @@ func (m *OrderItemAdded) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: order_item_added: wiretype end group for non-group")
+			return fmt.Errorf("proto: order_item_a_added: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: order_item_added: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: order_item_a_added: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1080,7 +1171,7 @@ func (m *OrderItemAdded) Unmarshal(dAtA []byte) error {
 			}
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ItemId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ItemA", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1105,11 +1196,61 @@ func (m *OrderItemAdded) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ItemId = string(dAtA[iNdEx:postIndex])
+			m.ItemA = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvents(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *OrderItemBAdded) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvents
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: order_item_b_added: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: order_item_b_added: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sku", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1134,11 +1275,49 @@ func (m *OrderItemAdded) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Sku = string(dAtA[iNdEx:postIndex])
+			m.Id = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 6:
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			m.Version = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Version |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field At", wireType)
+			}
+			m.At = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.At |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ItemB", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1163,7 +1342,7 @@ func (m *OrderItemAdded) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Description = string(dAtA[iNdEx:postIndex])
+			m.ItemB = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1904,39 +2083,6 @@ func (m *EventContainer) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Me", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvents
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthEvents
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Me == nil {
-				m.Me = &OrderItemAdded{}
-			}
-			if err := m.Me.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Mf", wireType)
@@ -2033,6 +2179,72 @@ func (m *EventContainer) Unmarshal(dAtA []byte) error {
 				m.Mh = &OrderAssignCustomer{}
 			}
 			if err := m.Mh.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 101:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ia", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthEvents
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Ia == nil {
+				m.Ia = &OrderItemAAdded{}
+			}
+			if err := m.Ia.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 102:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ib", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthEvents
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Ib == nil {
+				m.Ib = &OrderItemBAdded{}
+			}
+			if err := m.Ib.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2165,33 +2377,33 @@ var (
 func init() { proto.RegisterFile("rpc/events.proto", fileDescriptorEvents) }
 
 var fileDescriptorEvents = []byte{
-	// 445 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x53, 0xcd, 0x8e, 0xd3, 0x30,
-	0x10, 0x56, 0xa6, 0xbb, 0xed, 0x32, 0x11, 0xbb, 0xc5, 0x62, 0xb5, 0x51, 0x0f, 0xa5, 0x8a, 0x40,
-	0x54, 0x48, 0xb4, 0x52, 0x79, 0x03, 0x6e, 0xbd, 0xfa, 0xc8, 0xa5, 0x38, 0xb6, 0x93, 0x5a, 0xd4,
-	0x71, 0xe4, 0x38, 0x45, 0x7d, 0x0d, 0x6e, 0xbc, 0x11, 0x47, 0x1e, 0x01, 0xf5, 0x49, 0x50, 0xa6,
-	0x3f, 0x1b, 0x7a, 0xad, 0xb8, 0xcd, 0x37, 0xf9, 0xfc, 0x7d, 0xe3, 0xcc, 0x67, 0x1c, 0xfa, 0x4a,
-	0xce, 0xf5, 0x56, 0x97, 0xa1, 0x9e, 0x55, 0xde, 0x05, 0xc7, 0x7a, 0xbe, 0x92, 0xa3, 0x8f, 0x85,
-	0x09, 0xeb, 0x26, 0x9b, 0x49, 0x67, 0xe7, 0x85, 0x2b, 0xdc, 0x9c, 0xbe, 0x65, 0x4d, 0x4e, 0x88,
-	0x00, 0x55, 0x87, 0x33, 0xe9, 0x12, 0x5f, 0x3a, 0xaf, 0xb4, 0x5f, 0x49, 0xaf, 0x45, 0xd0, 0x8a,
-	0xdd, 0x23, 0x18, 0x95, 0x44, 0x93, 0x68, 0xfa, 0x82, 0x83, 0x51, 0x2c, 0xc1, 0xc1, 0x56, 0xfb,
-	0xda, 0xb8, 0x32, 0x81, 0x49, 0x34, 0xbd, 0xe5, 0x27, 0xd8, 0x32, 0x45, 0x48, 0x7a, 0x93, 0x68,
-	0xda, 0xe3, 0x20, 0x42, 0xfa, 0x33, 0xc2, 0xe1, 0x41, 0xcb, 0x04, 0x6d, 0x57, 0x42, 0xa9, 0x6b,
-	0xe4, 0xd8, 0x13, 0x0e, 0x48, 0xc7, 0xa8, 0xe4, 0x86, 0x8e, 0xf7, 0x5b, 0xb8, 0x54, 0x6c, 0x88,
-	0xbd, 0xfa, 0x5b, 0x93, 0xdc, 0x52, 0xb3, 0x2d, 0xd9, 0x04, 0x63, 0xa5, 0x6b, 0xe9, 0x4d, 0x15,
-	0x5a, 0xe1, 0x3e, 0x7d, 0xe9, 0xb6, 0xd2, 0x02, 0x59, 0x67, 0x34, 0xaf, 0xad, 0xdb, 0xfe, 0x97,
-	0xe1, 0xd2, 0xef, 0xf8, 0x70, 0x30, 0xca, 0x9b, 0x4d, 0x6e, 0x36, 0x9b, 0xab, 0x5c, 0xee, 0x11,
-	0xb2, 0xdd, 0xd1, 0x00, 0xb2, 0x1d, 0x1b, 0xe1, 0x9d, 0xa8, 0x2a, 0xdf, 0xce, 0x4e, 0xd7, 0xbf,
-	0xe3, 0x67, 0x9c, 0x7a, 0x7c, 0x3c, 0x18, 0x8b, 0xba, 0x36, 0x45, 0xb9, 0x92, 0x4d, 0x1d, 0x9c,
-	0xd5, 0xfe, 0x0a, 0xfb, 0x37, 0x18, 0x9f, 0x54, 0x9e, 0x2f, 0x8a, 0xa7, 0xd6, 0x52, 0xa5, 0x5f,
-	0x71, 0x78, 0x26, 0x5c, 0x9d, 0x1f, 0xc6, 0xf0, 0xa6, 0x14, 0x56, 0x1f, 0x7d, 0xa8, 0x4e, 0x7f,
-	0x00, 0x3e, 0x50, 0xc6, 0x57, 0xd2, 0x95, 0x41, 0x98, 0x52, 0xfb, 0x96, 0x17, 0x76, 0x95, 0x26,
-	0x8f, 0x5b, 0x4e, 0x35, 0x4b, 0x11, 0xac, 0x20, 0x83, 0x78, 0xc1, 0x66, 0xbe, 0x92, 0xb3, 0x7f,
-	0x52, 0xcd, 0xc1, 0x0a, 0xf6, 0x16, 0xc1, 0x4a, 0xf2, 0x8b, 0x17, 0xaf, 0x3b, 0x9c, 0xf3, 0xa6,
-	0x38, 0x58, 0xc9, 0xde, 0x21, 0x1c, 0x67, 0x88, 0x17, 0x8f, 0x1d, 0xd6, 0x73, 0xa6, 0x39, 0x58,
-	0xcd, 0xde, 0x23, 0xd8, 0x9c, 0x96, 0x10, 0x2f, 0x9e, 0x2e, 0x69, 0xc7, 0x7c, 0x71, 0xb0, 0x39,
-	0xe9, 0x15, 0x14, 0xc9, 0x93, 0xde, 0xe5, 0x2f, 0xe3, 0x60, 0x0b, 0xf6, 0x01, 0xc1, 0xae, 0x93,
-	0x01, 0xd1, 0x46, 0x1d, 0xbd, 0x8b, 0x6d, 0x72, 0xb0, 0xeb, 0xcf, 0xaf, 0x7e, 0xed, 0xc7, 0xd1,
-	0xef, 0xfd, 0x38, 0xfa, 0xb3, 0x1f, 0x47, 0x5f, 0xda, 0x57, 0x9f, 0xf5, 0xe9, 0x35, 0x7f, 0xfa,
-	0x1b, 0x00, 0x00, 0xff, 0xff, 0xca, 0x1c, 0x12, 0xed, 0x15, 0x04, 0x00, 0x00,
+	// 447 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x94, 0x41, 0x8e, 0xda, 0x30,
+	0x14, 0x86, 0x15, 0x33, 0xc0, 0xf4, 0xa1, 0xce, 0x4c, 0xad, 0xa2, 0xb1, 0x58, 0x50, 0x14, 0xb5,
+	0x2a, 0xaa, 0x54, 0x90, 0xe8, 0x09, 0x3a, 0x3b, 0xb6, 0x5e, 0x76, 0x93, 0xda, 0xb1, 0x13, 0x2c,
+	0xe1, 0x38, 0x72, 0x0c, 0x15, 0x87, 0xeb, 0xbe, 0xcb, 0x1e, 0xa1, 0xe2, 0x24, 0x55, 0x5e, 0x80,
+	0x66, 0xd0, 0xec, 0xd2, 0x9d, 0x5f, 0xf2, 0xf9, 0xff, 0x12, 0xdb, 0xcf, 0xf0, 0xe0, 0xcb, 0x74,
+	0xa9, 0xf7, 0xba, 0x08, 0xd5, 0xa2, 0xf4, 0x2e, 0x38, 0xda, 0xf3, 0x65, 0x3a, 0xf9, 0x9c, 0x9b,
+	0xb0, 0xd9, 0xc9, 0x45, 0xea, 0xec, 0x32, 0x77, 0xb9, 0x5b, 0xe2, 0x3b, 0xb9, 0xcb, 0xb0, 0xc2,
+	0x02, 0x47, 0xcd, 0x9c, 0x78, 0x0d, 0xaf, 0x9d, 0x57, 0xda, 0x27, 0xa9, 0xd7, 0x22, 0x68, 0x45,
+	0xef, 0x80, 0x18, 0xc5, 0xa2, 0x59, 0x34, 0x7f, 0xc5, 0x89, 0x51, 0x94, 0xc1, 0x70, 0xaf, 0x7d,
+	0x65, 0x5c, 0xc1, 0xc8, 0x2c, 0x9a, 0xf7, 0xf9, 0xb9, 0xac, 0x49, 0x11, 0x58, 0x6f, 0x16, 0xcd,
+	0x7b, 0x9c, 0x88, 0x10, 0x6b, 0xa0, 0x4d, 0x94, 0x09, 0xda, 0x26, 0x22, 0x11, 0x4a, 0x75, 0xc9,
+	0xa3, 0x63, 0x18, 0x34, 0x49, 0xec, 0x06, 0x67, 0xf7, 0xeb, 0xea, 0xeb, 0x95, 0x46, 0xfe, 0x37,
+	0x8d, 0x6c, 0x6b, 0x9e, 0xe2, 0xfc, 0x99, 0xc6, 0x6b, 0xeb, 0xf6, 0x9d, 0x34, 0x8f, 0x30, 0xc4,
+	0x24, 0xa3, 0x4e, 0x1e, 0xb4, 0xae, 0x55, 0xfc, 0x03, 0xee, 0x1b, 0x51, 0xb6, 0xdb, 0x66, 0x66,
+	0xbb, 0xed, 0x64, 0xb9, 0x03, 0x22, 0x0f, 0x27, 0x01, 0x91, 0x07, 0x3a, 0x81, 0x5b, 0x51, 0x96,
+	0xbe, 0xfe, 0x76, 0xd6, 0x9f, 0x45, 0xf3, 0x5b, 0x7e, 0xa9, 0x63, 0x0f, 0xe3, 0x46, 0x2c, 0xaa,
+	0xca, 0xe4, 0x45, 0x92, 0xee, 0xaa, 0xe0, 0xac, 0xf6, 0x1d, 0xf4, 0xef, 0x60, 0x74, 0x4e, 0xf9,
+	0xf7, 0xa3, 0x70, 0x7e, 0xb4, 0x56, 0xf1, 0x77, 0x78, 0xb8, 0x00, 0x9d, 0x4f, 0x1c, 0xa5, 0x70,
+	0x53, 0x08, 0xab, 0x4f, 0x1e, 0x1c, 0xc7, 0x3f, 0x09, 0xdc, 0x63, 0x57, 0x24, 0xa9, 0x2b, 0x82,
+	0x30, 0x85, 0xf6, 0x35, 0x17, 0x0e, 0xa5, 0x46, 0x47, 0x9f, 0xe3, 0x98, 0xc6, 0x40, 0xac, 0x40,
+	0xc1, 0x68, 0x45, 0x17, 0xbe, 0x4c, 0x17, 0xcf, 0xfa, 0x80, 0x13, 0x2b, 0xe8, 0x7b, 0x20, 0x36,
+	0x45, 0xdf, 0x68, 0xf5, 0xb6, 0xc5, 0x5c, 0x76, 0x8a, 0x13, 0x9b, 0xd2, 0x8f, 0x40, 0x6c, 0x86,
+	0xab, 0x3b, 0x5a, 0x3d, 0xb6, 0xa8, 0xf6, 0xc1, 0xe1, 0xc4, 0x66, 0xf4, 0x03, 0x10, 0x9b, 0xb3,
+	0x01, 0x82, 0x63, 0x04, 0xaf, 0xd7, 0x82, 0x13, 0x9b, 0xd3, 0x4f, 0x40, 0xec, 0x86, 0x0d, 0x11,
+	0x9b, 0xb4, 0xf2, 0xae, 0xb6, 0x89, 0x13, 0xbb, 0xa9, 0xdd, 0x46, 0x30, 0xfd, 0xb2, 0xfb, 0xd4,
+	0x82, 0x9c, 0x18, 0x81, 0xa0, 0x64, 0xd9, 0xcb, 0xa0, 0xbc, 0x80, 0xf2, 0xe9, 0xcd, 0xaf, 0xe3,
+	0x34, 0xfa, 0x7d, 0x9c, 0x46, 0x7f, 0x8e, 0xd3, 0xe8, 0x5b, 0x7d, 0xa5, 0xc8, 0x01, 0x5e, 0x15,
+	0x5f, 0xfe, 0x06, 0x00, 0x00, 0xff, 0xff, 0x25, 0x02, 0xbd, 0x72, 0x72, 0x04, 0x00, 0x00,
 }
