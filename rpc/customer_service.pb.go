@@ -7,7 +7,6 @@
 	It is generated from these files:
 		rpc/customer_service.proto
 		rpc/order_service.proto
-		rpc/events.proto
 
 	It has these top-level messages:
 		Customer
@@ -24,14 +23,6 @@
 		OrderRejectRequest
 		GetOrderRequest
 		OrderResponse
-		OrderCreated
-		OrderItemAAdded
-		OrderItemBAdded
-		OrderItemRemoved
-		OrderFulfilled
-		OrderAssignCustomer
-		CustomerCreated
-		EventContainer
 */
 package rpc
 

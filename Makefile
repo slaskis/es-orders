@@ -1,19 +1,21 @@
 
-build: generate es-orders
+build: es-orders
 	@: # sshhh
 .PHONY: build
 
-test: generate es-orders
+test: es-orders
 	@go test -coverprofile=coverage.out .
 	@go tool cover -func=coverage.out
 .PHONY: test
 
-bench: generate es-orders
+bench: es-orders
 	@go test -bench=.
 .PHONY: bench
 
-generate: $(wildcard rpc/*.pb.go)
-	@: # sshhh
+generate:
+	go generate .
+	sed -i.tmp s@github.com/golang/protobuf/@github.com/gogo/protobuf/@ $(wildcard rpc/*.twirp.go)
+	rm rpc/*.tmp
 .PHONY: generate
 
 vendor:
@@ -23,7 +25,3 @@ vendor:
 es-orders: $(wildcard *.go **/*.go)
 	go build .
 
-%.pb.go: %.proto generate.go
-	go generate .
-	sed -i.tmp s@github.com/golang/protobuf/@github.com/gogo/protobuf/@ $(wildcard rpc/*.twirp.go)
-	rm rpc/*.tmp
