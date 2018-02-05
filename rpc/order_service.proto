@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package acme;
 
-import "google/protobuf/timestamp.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "rpc";
 option (gogoproto.sizer_all) = true;
@@ -28,24 +28,24 @@ enum OrderStatus {
 }
 
 message Order {
-  string ID = 1;
+  string id = 1;
   int32 version = 2;
   string name = 3;
-  google.protobuf.Timestamp createdAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp updatedAt = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-  google.protobuf.Timestamp deletedAt = 6 [(gogoproto.stdtime) = true];
-  google.protobuf.Timestamp fulfilledAt = 9 [(gogoproto.stdtime) = true];
-  string fulfilledBy = 10;
+  google.protobuf.Timestamp created_at = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp updated_at = 5 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp deleted_at = 6 [(gogoproto.stdtime) = true];
+  google.protobuf.Timestamp fulfilled_at = 9 [(gogoproto.stdtime) = true];
+  string fulfilled_by = 10;
 
   repeated OrderItem items = 11;
   OrderStatus status = 12;
-  string customerID = 13;
+  string customer_id = 13;
 }
 
 message OrderItem {
-  string ID = 1;
+  string id = 1;
   int32 quantity = 2;
-  google.protobuf.Timestamp updatedAt = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  google.protobuf.Timestamp updated_at = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
   Item item = 3;
 }
 
@@ -56,7 +56,7 @@ enum ItemType {
 }
 
 message Item {
-  string ID = 1;
+  string id = 1;
   ItemType type = 2;
 
 }
@@ -69,27 +69,27 @@ message OrderNewRequest {
 }
 
 message OrderItemAddRequest {
-  string orderID = 1;
+  string order_id = 1;
   NewItem item = 2;
 }
 
 message OrderItemRemoveRequest {
-  string orderID = 1;
-  string orderItemID = 2;
+  string order_id = 1;
+  string order_item_id = 2;
 }
 
 message OrderApproveRequest {
-  string ID = 1;
-  string fulfilledBy = 2;
+  string id = 1;
+  string fulfilled_by = 2;
 }
 
 message OrderRejectRequest {
-  string ID = 1;
-  string fulfilledBy = 2;
+  string id = 1;
+  string fulfilled_by = 2;
 }
 
 message GetOrderRequest {
-  string ID = 1;
+  string id = 1;
 }
 
 message OrderResponse {

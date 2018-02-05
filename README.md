@@ -4,6 +4,7 @@ go get github.com/altairsix/eventsource-protobuf/...
 go get github.com/gogo/protobuf/proto
 go get github.com/gogo/protobuf/protoc-gen-gogofast
 go get github.com/gogo/protobuf/gogoproto
+go get github.com/ckaznocha/protoc-gen-lint
 eventsource dynamodb create-table --name orders --region eu-central-1
 
 go generate main.go
