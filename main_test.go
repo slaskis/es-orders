@@ -9,42 +9,45 @@ import (
 
 	"github.com/altairsix/eventsource"
 	"github.com/gogo/protobuf/proto"
-	"github.com/slaskis/es-orders/rpc"
+	"github.com/slaskis/es-orders/rpc/customer"
+	"github.com/slaskis/es-orders/rpc/events"
+	"github.com/slaskis/es-orders/rpc/order"
+	"github.com/slaskis/es-orders/rpc/user"
 )
 
 func TestServer(t *testing.T) {
-	orders := eventsource.New(&rpc.Order{},
-		eventsource.WithSerializer(rpc.NewSerializer()),
+	orders := eventsource.New(&order.Order{},
+		eventsource.WithSerializer(events.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
-	customers := eventsource.New(&rpc.Customer{},
-		eventsource.WithSerializer(rpc.NewSerializer()),
+	customers := eventsource.New(&customer.Customer{},
+		eventsource.WithSerializer(events.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
-	users := eventsource.New(&rpc.User{},
-		eventsource.WithSerializer(rpc.NewSerializer()),
+	users := eventsource.New(&user.User{},
+		eventsource.WithSerializer(events.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
 	srv := createServiceHTTPHandler(orders, customers, users)
 
-	ores1 := rpc.OrderResponse{}
-	request(t, srv, rpc.OrderServicePathPrefix+"CreateOrder", &rpc.OrderNewRequest{}, &ores1)
+	ores1 := order.OrderResponse{}
+	request(t, srv, order.OrderServicePathPrefix+"CreateOrder", &order.OrderNewRequest{}, &ores1)
 
-	ores2 := rpc.OrderResponse{}
-	request(t, srv, rpc.OrderServicePathPrefix+"GetOrder", &rpc.GetOrderRequest{ID: ores1.Order.ID}, &ores2)
-	if ores2.Order.CustomerID != "" {
+	ores2 := order.OrderResponse{}
+	request(t, srv, order.OrderServicePathPrefix+"GetOrder", &order.GetOrderRequest{Id: ores1.Order.Id}, &ores2)
+	if ores2.Order.CustomerId != "" {
 		t.Fatalf("expected no customer id")
 	}
 
-	ores3 := rpc.OrderResponse{}
-	request(t, srv, rpc.OrderServicePathPrefix+"ApproveOrder", &rpc.OrderApproveRequest{ID: ores2.Order.ID}, &ores3)
-	if ores3.Order.CustomerID == "" {
+	ores3 := order.OrderResponse{}
+	request(t, srv, order.OrderServicePathPrefix+"ApproveOrder", &order.OrderApproveRequest{Id: ores2.Order.Id}, &ores3)
+	if ores3.Order.CustomerId == "" {
 		t.Fatalf("expected customer id")
 	}
 
-	cres1 := rpc.CustomerResponse{}
-	request(t, srv, rpc.CustomerServicePathPrefix+"GetCustomer", &rpc.GetCustomerRequest{ID: ores3.Order.CustomerID}, &cres1)
-	if cres1.Customer.ID != ores3.Order.CustomerID {
+	cres1 := customer.CustomerResponse{}
+	request(t, srv, customer.CustomerServicePathPrefix+"GetCustomer", &customer.GetCustomerRequest{Id: ores3.Order.CustomerId}, &cres1)
+	if cres1.Customer.Id != ores3.Order.CustomerId {
 		t.Fatalf("expected customer id")
 	}
 }

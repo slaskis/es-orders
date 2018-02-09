@@ -1,10 +1,11 @@
-package rpc
+package user
 
 import (
 	"context"
 	"log"
 
 	"github.com/altairsix/eventsource"
+	"github.com/slaskis/es-orders/rpc/events"
 )
 
 func (user *User) On(event eventsource.Event) error {
@@ -17,7 +18,7 @@ func (user *User) On(event eventsource.Event) error {
 }
 
 func (user *User) Apply(ctx context.Context, command eventsource.Command) ([]eventsource.Event, error) {
-	builder := NewBuilder(command.AggregateID(), int(user.Version))
+	builder := events.NewBuilder(command.AggregateID(), int(user.Version))
 	switch cmd := command.(type) {
 	default:
 		log.Printf("unknown command: %T(%+v)", cmd, cmd)

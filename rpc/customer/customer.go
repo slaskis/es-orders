@@ -1,23 +1,25 @@
-package rpc
+package customer
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/altairsix/eventsource"
+	"github.com/slaskis/es-orders/rpc/events"
 )
 
 func (customer *Customer) On(event eventsource.Event) error {
 	switch v := event.(type) {
-	case *CustomerCreated:
-		if customer.ID != "" {
+	case *events.CustomerCreated:
+		if customer.Id != "" {
 			return errors.New("customer already exist")
 		}
-		customer.ID = v.AggregateID()
-		customer.CreatedAt = v.EventAt()
-		customer.UpdatedAt = v.EventAt()
+		customer.Id = v.AggregateID()
+		customer.CreatedAt = v.EventAt().Format(time.RFC3339)
+		customer.UpdatedAt = v.EventAt().Format(time.RFC3339)
 
 	default:
 		return fmt.Errorf("unable to handle event, %v", v)
@@ -32,7 +34,7 @@ type CommandCreateCustomer struct {
 }
 
 func (customer *Customer) Apply(ctx context.Context, command eventsource.Command) ([]eventsource.Event, error) {
-	builder := NewBuilder(command.AggregateID(), int(customer.Version))
+	builder := events.NewBuilder(command.AggregateID(), int(customer.Version))
 	switch cmd := command.(type) {
 	case *CommandCreateCustomer:
 		builder.CustomerCreated(cmd.Name)

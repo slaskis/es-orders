@@ -5,15 +5,23 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/twitchtv/twirp"
 
 	"github.com/altairsix/eventsource"
 	"github.com/altairsix/eventsource/dynamodbstore"
-	"github.com/slaskis/es-orders/rpc"
+	"github.com/slaskis/es-orders/internal/customerserver"
+	"github.com/slaskis/es-orders/internal/orderserver"
+	"github.com/slaskis/es-orders/internal/userserver"
+	"github.com/slaskis/es-orders/rpc/customer"
+	"github.com/slaskis/es-orders/rpc/events"
+	"github.com/slaskis/es-orders/rpc/order"
+	"github.com/slaskis/es-orders/rpc/user"
 )
 
 type options struct {
@@ -39,21 +47,21 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	orders := eventsource.New(&rpc.Order{},
+	orders := eventsource.New(&order.Order{},
 		eventsource.WithStore(store),
-		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithSerializer(events.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	customers := eventsource.New(&rpc.Customer{},
+	customers := eventsource.New(&customer.Customer{},
 		eventsource.WithStore(store),
-		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithSerializer(events.NewSerializer()),
 		eventsource.WithDebug(os.Stderr),
 	)
 
-	users := eventsource.New(&rpc.User{},
+	users := eventsource.New(&user.User{},
 		eventsource.WithStore(store),
-		eventsource.WithSerializer(rpc.NewSerializer()),
+		eventsource.WithSerializer(events.NewSerializer()),
 		eventsource.WithDebug(os.Stdout),
 	)
 
@@ -79,21 +87,23 @@ func logger() *twirp.ServerHooks {
 }
 
 func createServiceHTTPHandler(orders, customers, users *eventsource.Repository) http.Handler {
+	var entropy = rand.New(rand.NewSource(time.Unix(1000000, 0).UnixNano()))
+
 	return handleServers(
-		rpc.NewOrderServiceServer(NewOrderService(orders, customers, users), logger()),
-		rpc.NewCustomerServiceServer(NewCustomerService(customers), logger()),
-		rpc.NewUserServiceServer(NewUserService(users), logger()),
+		order.NewOrderServiceServer(orderserver.NewServer(orders, customers, users, entropy), logger()),
+		customer.NewCustomerServiceServer(customerserver.NewServer(customers), logger()),
+		user.NewUserServiceServer(userserver.NewServer(users), logger()),
 	)
 }
 
-func handleServers(orders, customers, users rpc.TwirpServer) http.HandlerFunc {
+func handleServers(orders order.TwirpServer, customers customer.TwirpServer, users user.TwirpServer) http.HandlerFunc {
 	notFound := http.NotFoundHandler()
 	return func(res http.ResponseWriter, req *http.Request) {
-		if strings.HasPrefix(req.URL.Path, rpc.OrderServicePathPrefix) {
+		if strings.HasPrefix(req.URL.Path, order.OrderServicePathPrefix) {
 			orders.ServeHTTP(res, req)
-		} else if strings.HasPrefix(req.URL.Path, rpc.CustomerServicePathPrefix) {
+		} else if strings.HasPrefix(req.URL.Path, customer.CustomerServicePathPrefix) {
 			customers.ServeHTTP(res, req)
-		} else if strings.HasPrefix(req.URL.Path, rpc.UserServicePathPrefix) {
+		} else if strings.HasPrefix(req.URL.Path, user.UserServicePathPrefix) {
 			users.ServeHTTP(res, req)
 		} else {
 			notFound.ServeHTTP(res, req)

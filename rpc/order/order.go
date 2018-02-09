@@ -1,50 +1,52 @@
-package rpc
+package order
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/altairsix/eventsource"
+	"github.com/slaskis/es-orders/rpc/events"
 )
 
 func (order *Order) On(event eventsource.Event) error {
 	// log.Printf("%T(%+v)", event, event)
 	switch v := event.(type) {
-	case *OrderCreated:
-		if order.ID != "" {
+	case *events.OrderCreated:
+		if order.Id != "" {
 			return errors.New("order already exists")
 		}
-		order.ID = v.AggregateID()
+		order.Id = v.AggregateID()
 		order.Status = OrderStatus_EMPTY
-		order.CreatedAt = v.EventAt()
-		order.UpdatedAt = v.EventAt()
+		order.CreatedAt = v.EventAt().Format(time.RFC3339)
+		order.UpdatedAt = v.EventAt().Format(time.RFC3339)
 
-	case *OrderItemAAdded:
+	case *events.OrderItemAAdded:
 		item := &OrderItem{
 			Quantity:  1,
-			UpdatedAt: v.EventAt(),
-			Item:      &Item{Type: ItemType_ITEM_A, ID: v.ItemA},
+			UpdatedAt: v.EventAt().Format(time.RFC3339),
+			Item:      &Item{Type: ItemType_ITEM_A, Id: v.ItemA},
 		}
 		order.Status = OrderStatus_PENDING
 		order.Items = append(order.Items, item)
-		order.UpdatedAt = v.EventAt()
+		order.UpdatedAt = v.EventAt().Format(time.RFC3339)
 
-	case *OrderItemBAdded:
+	case *events.OrderItemBAdded:
 		item := &OrderItem{
 			Quantity:  1,
-			UpdatedAt: v.EventAt(),
-			Item:      &Item{Type: ItemType_ITEM_B, ID: v.ItemB},
+			UpdatedAt: v.EventAt().Format(time.RFC3339),
+			Item:      &Item{Type: ItemType_ITEM_B, Id: v.ItemB},
 		}
 		order.Status = OrderStatus_PENDING
 		order.Items = append(order.Items, item)
-		order.UpdatedAt = v.EventAt()
+		order.UpdatedAt = v.EventAt().Format(time.RFC3339)
 
-	case *OrderItemRemoved:
+	case *events.OrderItemRemoved:
 		items := order.Items[:0]
 		for _, i := range order.Items {
-			if i.ID != v.ItemId {
+			if i.Id != v.ItemId {
 				items = append(items, i)
 			}
 		}
@@ -52,22 +54,21 @@ func (order *Order) On(event eventsource.Event) error {
 			order.Status = OrderStatus_EMPTY
 		}
 		order.Items = items
-		order.UpdatedAt = v.EventAt()
+		order.UpdatedAt = v.EventAt().Format(time.RFC3339)
 
-	case *OrderFulfilled:
-		at := v.EventAt()
+	case *events.OrderFulfilled:
 		order.FulfilledBy = v.By
-		order.FulfilledAt = &at
-		order.UpdatedAt = at
+		order.FulfilledAt = v.EventAt().Format(time.RFC3339)
+		order.UpdatedAt = v.EventAt().Format(time.RFC3339)
 		if v.Approved {
 			order.Status = OrderStatus_APPROVED
 		} else {
 			order.Status = OrderStatus_REJECTED
 		}
 
-	case *OrderAssignCustomer:
-		order.CustomerID = v.CustomerId
-		order.UpdatedAt = v.EventAt()
+	case *events.OrderAssignCustomer:
+		order.CustomerId = v.CustomerId
+		order.UpdatedAt = v.EventAt().Format(time.RFC3339)
 
 	default:
 		return fmt.Errorf("unable to handle event, %v", v)
@@ -103,7 +104,7 @@ type CommandAssignCustomer struct {
 }
 
 func (order *Order) Apply(ctx context.Context, command eventsource.Command) ([]eventsource.Event, error) {
-	builder := NewBuilder(command.AggregateID(), int(order.Version))
+	builder := events.NewBuilder(command.AggregateID(), int(order.Version))
 	switch cmd := command.(type) {
 	case *CommandCreateOrder:
 		builder.OrderCreated()
@@ -117,7 +118,7 @@ func (order *Order) Apply(ctx context.Context, command eventsource.Command) ([]e
 	case *CommandRemoveItem:
 		builder.OrderItemRemoved(cmd.ItemID)
 	case *CommandFulfillOrder:
-		if order.FulfilledAt != nil {
+		if order.FulfilledAt != "" {
 			return builder.Events, errors.New("already fulfilled")
 		}
 		builder.OrderFulfilled(cmd.By, cmd.Approved)
